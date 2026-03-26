@@ -1,0 +1,88 @@
+/* Base Button Styling */
+.fb-auth-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  font-family: inherit;
+}
+
+/* Micro-interaction: Lift on hover */
+.fb-auth-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.fb-auth-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Primary Login Style (Emerald Green) */
+.login-variant {
+  background: #10b981;
+  color: white;
+}
+
+.login-variant:hover {
+  background: #059669;
+}
+
+/* Secondary Logout Style (Soft Slate) */
+.logout-variant {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+.logout-variant:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Icon Animation */
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.fb-auth-btn:hover .icon-wrapper {
+  transform: scale(1.1);
+}
+
+/* The Shimmer Effect */
+.shimmer-effect {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: none;
+}
+
+.login-variant:hover .shimmer-effect {
+  left: 160%;
+  transition: all 0.7s ease-in-out;
+}
+
+/* Loading state */
+.loading {
+  opacity: 0.6;
+  cursor: wait;
+}

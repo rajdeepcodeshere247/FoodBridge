@@ -1,0 +1,116 @@
+/* Sticky Header with Glassmorphism */
+.fb-navbar-wrap {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.fb-navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.7rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Brand Styling */
+.fb-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fb-brand:hover {
+  transform: scale(1.05);
+}
+
+.brand-text {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #0f766e, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Navigation Links */
+.fb-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-link {
+  color: #4b5563;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  position: relative;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: #0f766e;
+  background: #f0fdfa;
+}
+
+/* Active Link Indicator */
+.nav-link.active {
+  color: #0f766e;
+  background: #f0fdfa;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: #10b981;
+  border-radius: 10px;
+  animation: grow 0.3s ease forwards;
+}
+
+@keyframes grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Auth Section Divider */
+.nav-auth-section {
+  margin-left: 0.5rem;
+  padding-left: 1.25rem;
+  border-left: 1px solid #e5e7eb;
+}
+
+/* Responsive Logic */
+@media (max-width: 850px) {
+  .brand-text { display: none; } /* Show only logo on small tablets */
+}
+
+@media (max-width: 640px) {
+  .fb-navbar {
+    padding: 0.8rem 1rem;
+  }
+  .fb-nav-links {
+    gap: 0.25rem;
+  }
+  .nav-link {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+  .nav-auth-section {
+    padding-left: 0.5rem;
+    border: none;
+  }
+}

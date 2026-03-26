@@ -1,5 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify'; // Added
+import 'react-toastify/dist/ReactToastify.css'; // Added
+
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
 import FoodListPage from './pages/FoodListPage';
@@ -18,6 +21,20 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
+        {/* The ToastContainer must be inside the Router or at the root level */}
+        <ToastContainer 
+          position="bottom-right" 
+          autoClose={3000} 
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
+        
         <main className="fb-main">
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -30,6 +47,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
           </Routes>
         </main>
+        
         <Footer />
       </Router>
     </AuthProvider>
