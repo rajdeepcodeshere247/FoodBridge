@@ -1,29 +1,38 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-// TODO: Import pages as you build them
-// import HomePage from './pages/HomePage';
-// import DashboardPage from './pages/DashboardPage';
-// import FoodListPage from './pages/FoodListPage';
-// import FoodDetailPage from './pages/FoodDetailPage';
-// import AddFoodPage from './pages/AddFoodPage';
-// import MapPage from './pages/MapPage';
-// import ProfilePage from './pages/ProfilePage';
-// import LoginPage from './pages/LoginPage';
-
-// TODO: Import context providers
-// import { AuthProvider } from './context/AuthContext';
+import HomePage from './pages/HomePage';
+import DashboardPage from './pages/DashboardPage';
+import FoodListPage from './pages/FoodListPage';
+import FoodDetailPage from './pages/FoodDetailPage';
+import AddFoodPage from './pages/AddFoodPage';
+import MapPage from './pages/MapPage';
+import ProfilePage from './pages/ProfilePage';
+import LoginPage from './pages/LoginPage';
+import Navbar from './components/common/Navbar';
+import Footer from './components/common/Footer';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
-    // <AuthProvider>
+    <AuthProvider>
       <Router>
-        <Routes>
-          <Route path="/" element={<div style={{padding:40}}><h1>🌉 FoodBridge</h1><p>Setup complete. Start building your pages!</p></div>} />
-          {/* TODO: Add routes for each page */}
-        </Routes>
+        <Navbar />
+        <main className="fb-main">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/foods" element={<FoodListPage />} />
+            <Route path="/foods/:id" element={<FoodDetailPage />} />
+            <Route path="/add-food" element={<ProtectedRoute><AddFoodPage /></ProtectedRoute>} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="/login" element={<LoginPage />} />
+          </Routes>
+        </main>
+        <Footer />
       </Router>
-    // </AuthProvider>
+    </AuthProvider>
   );
 }
 

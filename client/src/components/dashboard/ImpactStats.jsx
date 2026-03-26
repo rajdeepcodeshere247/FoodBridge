@@ -1,13 +1,21 @@
-// ImpactStats — shows meals saved, volunteers active, etc.
 import React from 'react';
 
 function ImpactStats({ stats = {} }) {
-  // TODO: Fetch real stats from backend /api/stats
+  const cards = [
+    { label: 'Meals Saved', value: stats.mealsSaved ?? 0 },
+    { label: 'Active Volunteers', value: stats.volunteers ?? 0 },
+    { label: 'Listings Today', value: stats.listingsToday ?? 0 },
+    { label: 'Successful Deliveries', value: stats.deliveries ?? 0 }
+  ];
+
   return (
-    <div className="impact-stats">
-      <div>Meals Saved: {stats.mealsSaved ?? 0}</div>
-      <div>Active Volunteers: {stats.volunteers ?? 0}</div>
-      <div>Food Listings Today: {stats.listingsToday ?? 0}</div>
+    <div className="fb-stats-grid">
+      {cards.map((item) => (
+        <div key={item.label} className="fb-stat-card">
+          <p>{item.label}</p>
+          <h3>{item.value}</h3>
+        </div>
+      ))}
     </div>
   );
 }
