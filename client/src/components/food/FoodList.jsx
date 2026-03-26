@@ -1,15 +1,21 @@
 import React from 'react';
 import FoodCard from '../common/FoodCard';
 
-function FoodList({ items = [] }) {
+function FoodList({ items = [], onAcceptPickup, onViewMap, userLocation }) {
   if (!items.length) {
-    return <p className="fb-empty">No food listings available right now.</p>;
+    return <p className="fb-empty">No food listings match your filters right now.</p>;
   }
 
   return (
     <div className="fb-grid">
       {items.map((item) => (
-        <FoodCard key={item.id} food={item} />
+        <FoodCard
+          key={item.id}
+          food={item}
+          onAcceptPickup={onAcceptPickup}
+          onViewMap={onViewMap}
+          userLocation={userLocation}
+        />
       ))}
     </div>
   );

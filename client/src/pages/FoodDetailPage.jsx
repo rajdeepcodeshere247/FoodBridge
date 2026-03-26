@@ -3,12 +3,15 @@ import { useParams } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ExpiryTimer from '../components/common/ExpiryTimer';
 import FoodQualityBadge from '../components/food/FoodQualityBadge';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 import { getFoodById } from '../services/food.service';
 
 function FoodDetailPage() {
   const { id } = useParams();
   const [food, setFood] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  useScrollReveal();
 
   useEffect(() => {
     getFoodById(id)
@@ -22,8 +25,12 @@ function FoodDetailPage() {
 
   return (
     <div className="fb-page fb-detail">
-      <img src={food.image_url || 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1200&q=80'} alt={food.title} className="fb-detail-img" />
-      <div>
+      <img
+        src={food.image_url || 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1200&q=80'}
+        alt={food.title}
+        className="fb-detail-img fb-reveal"
+      />
+      <div className="fb-reveal">
         <h1>{food.title}</h1>
         <p>{food.description}</p>
         <p><strong>Quantity:</strong> {food.quantity || 'N/A'}</p>

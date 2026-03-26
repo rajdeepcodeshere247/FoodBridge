@@ -1,7 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify'; // Added
-import 'react-toastify/dist/ReactToastify.css'; // Added
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
@@ -14,42 +14,51 @@ import LoginPage from './pages/LoginPage';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import { AuthProvider } from './context/AuthContext';
+import { LocationProvider } from './context/LocationContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+
+function AppRoutes() {
+  const route = useLocation();
+
+  return (
+    <main key={route.pathname} className="fb-main fb-route-enter">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/foods" element={<FoodListPage />} />
+        <Route path="/foods/:id" element={<FoodDetailPage />} />
+        <Route path="/add-food" element={<ProtectedRoute><AddFoodPage /></ProtectedRoute>} />
+        <Route path="/map" element={<MapPage />} />
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </main>
+  );
+}
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Navbar />
-        {/* The ToastContainer must be inside the Router or at the root level */}
-        <ToastContainer 
-          position="bottom-right" 
-          autoClose={3000} 
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
-        
-        <main className="fb-main">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/foods" element={<FoodListPage />} />
-            <Route path="/foods/:id" element={<FoodDetailPage />} />
-            <Route path="/add-food" element={<ProtectedRoute><AddFoodPage /></ProtectedRoute>} />
-            <Route path="/map" element={<MapPage />} />
-            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-            <Route path="/login" element={<LoginPage />} />
-          </Routes>
-        </main>
-        
-        <Footer />
-      </Router>
+      <LocationProvider>
+        <Router>
+          <Navbar />
+          <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
+
+          <AppRoutes />
+          <Footer />
+        </Router>
+      </LocationProvider>
     </AuthProvider>
   );
 }

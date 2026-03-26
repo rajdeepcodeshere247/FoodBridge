@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import ImpactStats from '../components/dashboard/ImpactStats';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 import { getAllFood } from '../services/food.service';
 
 function DashboardPage() {
   const [stats, setStats] = useState({});
+
+  useScrollReveal();
 
   useEffect(() => {
     getAllFood()
@@ -25,9 +28,13 @@ function DashboardPage() {
 
   return (
     <div className="fb-page">
-      <h1>Impact Dashboard</h1>
-      <p className="fb-subtitle">Track rescue progress and community contribution.</p>
-      <ImpactStats stats={stats} />
+      <div className="fb-reveal">
+        <h1>Impact Dashboard</h1>
+        <p className="fb-subtitle">Track rescue progress and community contribution.</p>
+      </div>
+      <section className="fb-reveal">
+        <ImpactStats stats={stats} />
+      </section>
     </div>
   );
 }

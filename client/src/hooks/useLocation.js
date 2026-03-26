@@ -1,20 +1,6 @@
-// Custom hook — gets user's current GPS location
-import { useState, useEffect } from 'react';
+import { useLocationContext } from '../context/LocationContext';
 
 export function useLocation() {
-  const [location, setLocation] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setError('Geolocation not supported');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      (err) => setError(err.message)
-    );
-  }, []);
-
-  return { location, error };
+  const { location, error, status, requestLocation } = useLocationContext();
+  return { location, error, status, requestLocation };
 }
