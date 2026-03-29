@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import ImpactStats from '../components/dashboard/ImpactStats';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { getAllFood } from '../services/food.service';
+import { useAuth } from '../context/AuthContext';
 
 function DashboardPage() {
+  const { user } = useAuth();
   const [stats, setStats] = useState({});
 
   useScrollReveal();
@@ -29,11 +32,32 @@ function DashboardPage() {
   return (
     <div className="fb-page">
       <div className="fb-reveal">
-        <h1>Impact Dashboard</h1>
-        <p className="fb-subtitle">Track rescue progress and community contribution.</p>
+        <h1>Welcome, {user?.name?.split(' ')[0] || 'FoodBridge Hero'} 👋</h1>
+        <p className="fb-subtitle">Track rescue progress and jump into donor or volunteer actions.</p>
       </div>
+
       <section className="fb-reveal">
         <ImpactStats stats={stats} />
+      </section>
+
+      <section className="fb-grid fb-reveal">
+        <article className="fb-panel">
+          <h3>Donor Dashboard</h3>
+          <p>Post new donations and manage listing status (available/picked).</p>
+          <div className="fb-actions">
+            <Link to="/add-food" className="fb-btn">Donate Food</Link>
+            <Link to="/foods" className="fb-btn-secondary">My Listings</Link>
+          </div>
+        </article>
+
+        <article className="fb-panel">
+          <h3>Volunteer / User Dashboard</h3>
+          <p>Check requested pickups, browse nearby food, and use map navigation.</p>
+          <div className="fb-actions">
+            <Link to="/foods" className="fb-btn">Request Food</Link>
+            <Link to="/map" className="fb-btn-secondary">Open Map</Link>
+          </div>
+        </article>
       </section>
     </div>
   );

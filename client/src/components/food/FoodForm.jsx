@@ -54,8 +54,8 @@ function FoodForm({ onSubmit, submitting = false }) {
       <input name="expiry_time" type="datetime-local" value={formData.expiry_time} onChange={handleChange} required />
       <input name="location_text" placeholder="Pickup location" value={formData.location_text} onChange={handleChange} required />
       <div className="fb-form-row">
-        <input name="latitude" type="number" step="any" placeholder="Latitude" value={formData.latitude} onChange={handleChange} />
-        <input name="longitude" type="number" step="any" placeholder="Longitude" value={formData.longitude} onChange={handleChange} />
+        <input name="latitude" type="number" step="any" placeholder="Latitude" value={formData.latitude} onChange={handleChange} required />
+        <input name="longitude" type="number" step="any" placeholder="Longitude" value={formData.longitude} onChange={handleChange} required />
       </div>
       <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
       <button type="button" className="fb-btn-secondary" onClick={handleQualityCheck} disabled={!imageFile || checking}>

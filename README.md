@@ -79,6 +79,8 @@ cp .env.example server/.env
 ```bash
 # Create a new PostgreSQL database
 createdb foodbridge_db
+# OR
+psql -U postgres -f database/create_db.sql
 
 # Run the schema
 psql -d foodbridge_db -f database/schema.sql
@@ -114,6 +116,8 @@ See `.env.example` for all required variables. Key ones:
 | `SESSION_SECRET` | Any long random string |
 | `AI_API_KEY` | Your AI provider API key |
 | `CLIENT_URL` | `http://localhost:3000` |
+| `REACT_APP_API_BASE_URL` | Frontend API base URL (e.g. `https://your-backend.vercel.app/api`) |
+| `PG_SSL_REJECT_UNAUTHORIZED` | Set `false` for providers using self-signed/intermediate cert chains |
 
 ---
 
@@ -124,7 +128,9 @@ See `.env.example` for all required variables. Key ones:
 | GET | `/api/auth/google` | Start Google OAuth login |
 | GET | `/api/auth/google/callback` | OAuth callback |
 | GET | `/api/auth/me` | Get current user |
-| GET | `/api/auth/logout` | Logout |
+| POST | `/api/auth/login` | Login with email + password |
+| POST | `/api/auth/register` | Register with email + password |
+| POST | `/api/auth/logout` | Logout |
 | GET | `/api/food` | Get all available food |
 | GET | `/api/food/nearby` | Get food near location (`?lat=&lng=&radius=`) |
 | GET | `/api/food/:id` | Get single food listing |
@@ -209,4 +215,3 @@ Branch naming:
 - [ ] Test AI quality check
 
 ---
-

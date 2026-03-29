@@ -9,9 +9,10 @@
 -- ─── Users ────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
   id          SERIAL PRIMARY KEY,
-  google_id   VARCHAR(255) UNIQUE NOT NULL,
+  google_id   VARCHAR(255) UNIQUE,
   name        VARCHAR(255) NOT NULL,
   email       VARCHAR(255) UNIQUE NOT NULL,
+  password_hash TEXT,
   avatar_url  TEXT,
   role        VARCHAR(50) DEFAULT 'donor' CHECK (role IN ('donor', 'volunteer', 'ngo', 'admin')),
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -47,6 +48,26 @@ CREATE TABLE IF NOT EXISTS deliveries (
   claimed_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   delivered_at    TIMESTAMP
 );
+
+-- ─── Session Store (express-session + connect-pg-simple) ──
+CREATE TABLE IF NOT EXISTS user_sessions (
+  sid       varchar NOT NULL COLLATE "default",
+  sess      json NOT NULL,
+  expire    timestamp(6) NOT NULL
+) WITH (OIDS=FALSE);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'user_sessions_pkey'
+  ) THEN
+    ALTER TABLE user_sessions ADD CONSTRAINT user_sessions_pkey PRIMARY KEY (sid);
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS IDX_user_sessions_expire ON user_sessions (expire);
 
 -- ─── Indexes ──────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_food_status ON food_listings(status);

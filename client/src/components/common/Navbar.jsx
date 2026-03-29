@@ -67,8 +67,14 @@ export default function Navbar() {
 
           {user && (
             <>
+              <NavLink to="/add-food" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+                Donate Food
+              </NavLink>
+              <NavLink to="/foods" onClick={() => setMenuOpen(false)} className="nav-link">
+                My Listings
+              </NavLink>
               <NavLink to="/dashboard" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-                Dashboard
+                My Deliveries
               </NavLink>
               <NavLink to="/profile" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
                 Profile
@@ -88,6 +94,13 @@ export default function Navbar() {
           >
             {theme === 'dark' ? <FiSun /> : <FiMoon />}
           </button>
+
+          {user && (
+            <div className="fb-user-chip" title={user.email}>
+              {user.avatar_url ? <img src={user.avatar_url} alt={user.name} className="fb-user-avatar" /> : <span className="fb-user-avatar-fallback">👤</span>}
+              <span>{user.name?.split(' ')[0]}</span>
+            </div>
+          )}
 
           <div className="nav-auth-section">
             <LoginButton />

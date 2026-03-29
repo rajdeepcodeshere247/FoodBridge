@@ -140,8 +140,8 @@ function FoodListPage() {
     });
   }, [preparedItems, searchText, distanceFilter, foodTypeFilter, qualityFilter, expiryFilter, sortBy]);
 
-  const handleAcceptPickup = (food) => {
-    toast.success(`Pickup request sent for ${food.title}.`);
+  const handleRequestFood = (food) => {
+    toast.success(`Food request sent for ${food.title}.`);
   };
 
   const handleViewMap = (food) => {
@@ -220,7 +220,7 @@ function FoodListPage() {
           view === 'card' ? (
             <FoodList
               items={filteredItems}
-              onAcceptPickup={handleAcceptPickup}
+              onAcceptPickup={handleRequestFood}
               onViewMap={handleViewMap}
               userLocation={location}
             />
@@ -246,8 +246,8 @@ function FoodListPage() {
                       <td>{new Date(item.expiry_time).toLocaleString()}</td>
                       <td><span className={`fb-pill fb-pill-${item.quality_status}`}>{item.quality_status}</span></td>
                       <td>
-                        <button type="button" className="fb-btn" onClick={() => handleAcceptPickup(item)}>
-                          Accept
+                        <button type="button" className="fb-btn" onClick={() => handleRequestFood(item)}>
+                          Reserve
                         </button>
                       </td>
                     </tr>

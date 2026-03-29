@@ -1,27 +1,50 @@
-// Authentication routes — Google OAuth flow
 const express = require('express');
-const router = express.Router();
 const passport = require('passport');
-// const authController = require('../controllers/auth.controller');
+const authController = require('../controllers/auth.controller');
 
-// GET /api/auth/google — Redirect to Google login
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+const router = express.Router();
+const hasGoogleOauthConfig = Boolean(
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CALLBACK_URL
+);
+const getClientUrl = (req) => req.app?.locals?.primaryClientUrl || 'https://food-b-ridge-demo.vercel.app';
 
-// GET /api/auth/google/callback — Google redirects here after login
-router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => res.redirect(process.env.CLIENT_URL + '/dashboard')
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+
+router.get('/google', (req, res, next) => {
+  if (!hasGoogleOauthConfig) {
+    return res.status(503).json({ error: 'Google authentication is not configured on the server.' });
+  }
+
+  const requestedRedirect = req.query.redirect;
+  req.session.postAuthRedirect = typeof requestedRedirect === 'string' && requestedRedirect.startsWith('/')
+    ? requestedRedirect
+    : '/dashboard';
+
+  next();
+}, passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get(
+  '/google/callback',
+  (req, res, next) => {
+    if (!hasGoogleOauthConfig) {
+      return res.status(503).json({ error: 'Google authentication is not configured on the server.' });
+    }
+    return next();
+  },
+  (req, res, next) => {
+    const failureRedirect = `${getClientUrl(req)}/login?error=google_auth_failed`;
+    return passport.authenticate('google', { failureRedirect })(req, res, next);
+  },
+  (req, res) => {
+    const postAuthRedirect = req.session?.postAuthRedirect || '/dashboard';
+    delete req.session.postAuthRedirect;
+    res.redirect(`${getClientUrl(req)}${postAuthRedirect}`);
+  }
 );
 
-// GET /api/auth/logout
-router.get('/logout', (req, res) => {
-  req.logout(() => res.redirect(process.env.CLIENT_URL));
-});
-
-// GET /api/auth/me — Get current logged-in user
-router.get('/me', (req, res) => {
-  // TODO: return req.user from session
-  res.json({ user: req.user || null });
-});
+router.post('/logout', authController.logout);
+router.get('/logout', authController.logout);
+router.get('/me', authController.getMe);
 
 module.exports = router;

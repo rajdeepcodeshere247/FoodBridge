@@ -28,7 +28,7 @@ export default function FoodCard({ food, onAcceptPickup, onViewMap, userLocation
           <strong>Distance:</strong> <span>{food.distanceLabel || 'Distance unavailable'}</span>
         </div>
         <div className="fb-row">
-          <strong>Location:</strong> <span>{food.location_text || 'Not specified'}</span>
+          <strong>Location:</strong> <span>{food.location_text || food.address || 'Not specified'}</span>
         </div>
         <div className="fb-row">
           <ExpiryTimer expiryTime={food.expiry_time} />
@@ -36,7 +36,7 @@ export default function FoodCard({ food, onAcceptPickup, onViewMap, userLocation
         <FoodQualityBadge status={food.quality_status} confidenceScore={food.confidence_score} />
         <div className="fb-card-actions">
           <button type="button" className="fb-btn" onClick={() => onAcceptPickup?.(food)}>
-            Accept Pickup
+            Request Food
           </button>
           <button type="button" className="fb-btn-secondary" onClick={() => onViewMap?.(food)}>
             <FiMapPin /> View on map

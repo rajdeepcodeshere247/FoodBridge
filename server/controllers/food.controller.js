@@ -1,29 +1,106 @@
-// Food controller — CRUD operations for food listings
-// const pool = require('../config/db.config');
+const {
+  getAllAvailableFood,
+  seedDemoListingsIfEmpty,
+  getNearbyAvailableFood,
+  getFoodById: getFoodByIdQuery,
+  createFoodListing,
+  updateFoodListing,
+  deleteFoodListing
+} = require('../../database/queries/food.queries');
 
 const getAllFood = async (req, res) => {
-  // TODO: SELECT * FROM food_listings WHERE status = 'available' ORDER BY created_at DESC
+  let items = await getAllAvailableFood();
+  if (!items.length) {
+    await seedDemoListingsIfEmpty();
+    items = await getAllAvailableFood();
+  }
+  res.json({ items });
 };
 
 const getNearbyFood = async (req, res) => {
-  // TODO: Use lat/lng from query params, use PostGIS or Haversine formula for proximity search
-  // const { lat, lng, radius = 5 } = req.query;
+  const { lat, lng, radius = 5 } = req.query;
+  const parsedLat = Number(lat);
+  const parsedLng = Number(lng);
+  const parsedRadius = Number(radius);
+
+  if (!Number.isFinite(parsedLat) || !Number.isFinite(parsedLng)) {
+    return res.status(400).json({ error: 'lat and lng query params must be valid numbers.' });
+  }
+
+  const items = await getNearbyAvailableFood({
+    lat: parsedLat,
+    lng: parsedLng,
+    radiusKm: Number.isFinite(parsedRadius) ? parsedRadius : 5
+  });
+
+  return res.json({ items });
 };
 
 const getFoodById = async (req, res) => {
-  // TODO: SELECT * FROM food_listings WHERE id = $1
+  const item = await getFoodByIdQuery(req.params.id);
+  if (!item) {
+    return res.status(404).json({ error: 'Food listing not found.' });
+  }
+  return res.json(item);
 };
 
 const createFood = async (req, res) => {
-  // TODO: INSERT into food_listings, also trigger AI quality check if image present
+  const {
+    donorId,
+    title,
+    description,
+    quantity,
+    foodType,
+    food_type,
+    expiryTime,
+    expiry_time,
+    latitude,
+    longitude,
+    address,
+    location_text,
+    imageUrl
+  } = req.body;
+
+  const parsedLatitude = Number(latitude);
+  const parsedLongitude = Number(longitude);
+  const normalizedExpiry = expiryTime || expiry_time;
+
+  if (!title || !quantity || !normalizedExpiry || !Number.isFinite(parsedLatitude) || !Number.isFinite(parsedLongitude)) {
+    return res.status(400).json({
+      error: 'title, quantity, expiry_time (or expiryTime), latitude, and longitude are required.'
+    });
+  }
+
+  const item = await createFoodListing({
+    donorId: req.user?.id || donorId || null,
+    title,
+    description,
+    quantity,
+    foodType: foodType || food_type || null,
+    expiryTime: normalizedExpiry,
+    imageUrl: req.file ? `/uploads/${req.file.filename}` : imageUrl || null,
+    latitude: parsedLatitude,
+    longitude: parsedLongitude,
+    address: address || location_text || null
+  });
+
+  return res.status(201).json(item);
 };
 
 const updateFood = async (req, res) => {
-  // TODO: UPDATE food_listings SET ... WHERE id = $1
+  const item = await updateFoodListing(req.params.id, req.body || {});
+  if (!item) {
+    return res.status(404).json({ error: 'Food listing not found.' });
+  }
+  return res.json(item);
 };
 
 const deleteFood = async (req, res) => {
-  // TODO: DELETE FROM food_listings WHERE id = $1 (check ownership first)
+  const removed = await deleteFoodListing(req.params.id);
+  if (!removed) {
+    return res.status(404).json({ error: 'Food listing not found.' });
+  }
+  return res.json({ success: true, deleted: removed.id });
 };
 
 module.exports = { getAllFood, getNearbyFood, getFoodById, createFood, updateFood, deleteFood };
