@@ -31,3 +31,6 @@ Thumbs.db
 
 # Uploads (user uploaded files)
 server/uploads/
+
+.vercel
+.env*.local

@@ -1,45 +1,146 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import FoodList from '../components/food/FoodList';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useLocationContext } from '../context/LocationContext';
-import { useScrollReveal } from '../hooks/useScrollReveal';
 import { getAllFood } from '../services/food.service';
+import './HomePage.css'; // Make sure to create this file
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.8, ease: [0.6, 0.05, -0.01, 0.9] } 
+  }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2, delayChildren: 0.3 }
+  }
+};
 
 function HomePage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { location, status } = useLocationContext();
-
-  useScrollReveal();
+  
+  const { scrollY } = useScroll();
+  // Parallax: Image moves at 30% speed
+  const backgroundY = useTransform(scrollY, [0, 1000], ["0%", "30%"]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   useEffect(() => {
     getAllFood()
-      .then((res) => setItems(Array.isArray(res.data) ? res.data : (res.data?.items || [])))
+      .then((res) => {
+        const data = Array.isArray(res.data) ? res.data : (res.data?.items || []);
+        setItems(data);
+      })
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div className="fb-page">
-      <section className="fb-hero fb-reveal">
-        <h1>Connect surplus food to people in need.</h1>
-        <p>FoodBridge helps donors, volunteers, and NGOs coordinate food rescue in real time.</p>
-        {status === 'success' && location && (
-          <p className="fb-subtitle">
-            You are near {location.lat.toFixed(4)}, {location.lng.toFixed(4)} (±{Math.round(location.accuracy || 0)}m)
-          </p>
-        )}
-        <div className="fb-actions">
-          <Link to="/foods" className="fb-btn">Browse Food</Link>
-          <Link to="/add-food" className="fb-btn-secondary">Donate Food</Link>
-        </div>
+    <div className="fb-main-container">
+      
+      {/* --- HERO SECTION --- */}
+      <section className="fb-hero-section">
+        <motion.div style={{ y: backgroundY }} className="fb-hero-bg">
+          <div className="fb-hero-overlay" />
+          <img 
+            src="/home-image.webp" 
+            alt="Food Donation" 
+            className="fb-hero-img"
+          />
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          style={{ opacity: heroOpacity }}
+          variants={staggerContainer}
+          className="fb-hero-content"
+        >
+          <motion.div variants={fadeInUp}>
+            <span className="fb-badge">Feed the Future</span>
+          </motion.div>
+
+          <motion.h1 variants={fadeInUp} className="fb-title">
+            Connect surplus <br/>
+            <span className="fb-accent">food to people.</span>
+          </motion.h1>
+
+          <motion.p variants={fadeInUp} className="fb-description">
+            FoodBridge helps donors, volunteers, and NGOs coordinate food rescue in real time.
+          </motion.p>
+
+          <motion.div variants={fadeInUp} className="fb-cta-group">
+            <Link to="/foods" className="fb-btn-primary">Browse Food</Link>
+            <Link to="/add-food" className="fb-btn-glass">Donate Now</Link>
+          </motion.div>
+
+          {status === 'success' && location && (
+            <motion.p variants={fadeInUp} className="fb-location-tag">
+              ● Live near {location.lat.toFixed(2)}, {location.lng.toFixed(2)}
+            </motion.p>
+          )}
+        </motion.div>
+
+        {/* Floating Scroll Indicator */}
+        <motion.div 
+          animate={{ y: [0, 12, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="fb-scroll-indicator"
+        >
+          <div className="fb-mouse"><div className="fb-wheel" /></div>
+        </motion.div>
       </section>
 
-      <section className="fb-reveal">
-        <h2>Latest Listings</h2>
-        {loading ? <LoadingSpinner label="Fetching available food..." /> : <FoodList items={items.slice(0, 6)} />}
-      </section>
+      {/* --- LISTINGS SECTION --- */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="fb-listings-section"
+      >
+        <div className="fb-section-header">
+          <div>
+            <h2 className="fb-section-title">Latest Listings</h2>
+            <p className="fb-section-subtitle">Real-time surplus available for pickup.</p>
+          </div>
+          <Link to="/foods" className="fb-view-all">View all listings →</Link>
+        </div>
+
+        <div className="fb-list-wrapper">
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div 
+                key="loader"
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                className="fb-loader-container"
+              >
+                <LoadingSpinner label="Locating donations..." />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="list"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <FoodList items={items.slice(0, 6)} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.section>
     </div>
   );
 }
