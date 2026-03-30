@@ -2,15 +2,57 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="https://img.icons8.com/fluency/48/restaurant.png" />
+    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/restaurant.png" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="theme-color" content="#22c55e" />
-    <meta name="description" content="FoodBridge — Connecting surplus food with people in need" />
-    <title>FoodBridge</title>
-    <!-- Leaflet CSS (for map) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <title>FoodBridge | Connect Surplus Food with Those in Need</title>
+    <meta name="description" content="FoodBridge connects restaurants and events (Donors) with volunteers and NGOs to reduce food waste and feed people using technology." />
+
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    
+    <link 
+      rel="stylesheet" 
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+      crossorigin="" 
+    />
+
+    <style>
+      /* Initial Loading Spinner Style */
+      #initial-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f8fafc;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e2e8f0;
+        border-top: 4px solid #22c55e;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <noscript>
+      <div style="text-align: center; padding: 50px;">
+        <h2>Please enable JavaScript</h2>
+        <p>FoodBridge requires JavaScript to connect donors with NGOs.</p>
+      </div>
+    </noscript>
+
+    <div id="root">
+      <div id="initial-loader">
+        <div class="spinner"></div>
+      </div>
+    </div>
   </body>
 </html>
