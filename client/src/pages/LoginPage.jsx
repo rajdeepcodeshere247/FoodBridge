@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { resolveBaseURL } from '../services/api';
 
 function LoginPage() {
-  const isGoogleAuthEnabled = process.env.REACT_APP_ENABLE_GOOGLE_AUTH === 'true';
+  const isGoogleAuthEnabled = process.env.REACT_APP_ENABLE_GOOGLE_AUTH !== 'false';
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { loginWithEmail, registerWithEmail } = useAuth();

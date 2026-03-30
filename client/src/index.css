@@ -317,3 +317,52 @@ body.fb-dark .fb-hero {
   .fb-detail,
   .fb-form-row { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 768px) {
+  .fb-page {
+    padding: 1.2rem 0.85rem;
+    gap: 1rem;
+  }
+
+  .fb-hero {
+    padding: 1.5rem 1rem;
+  }
+
+  .fb-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fb-card-img {
+    height: 170px;
+  }
+
+  .fb-btn,
+  .fb-btn-secondary,
+  .fb-auth-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .fb-card-actions {
+    flex-direction: column;
+  }
+
+  .fb-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .fb-filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fb-profile {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .fb-map-sidepanel {
+    max-height: 360px;
+  }
+}

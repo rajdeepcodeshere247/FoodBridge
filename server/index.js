@@ -7,12 +7,15 @@ const session = require('express-session');
 const passport = require('passport');
 const connectPgSimple = require('connect-pg-simple');
 const pool = require('./config/db.config');
+const { uploadsDir } = require('./config/uploads-path.config');
 
 const authRoutes = require('./routes/auth.routes');
 const foodRoutes = require('./routes/food.routes');
+const deliveryRoutes = require('./routes/delivery.routes');
+const aiRoutes = require('./routes/ai.routes');
+const userRoutes = require('./routes/user.routes');
 const errorHandler = require('./middleware/error.middleware');
 require('./config/passport.config');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,26 +35,36 @@ const defaultAllowedOrigins = [
   'https://food-b-ridge-demo.vercel.app'
 ];
 const configuredOrigins = clientUrlList.map(normalizeOrigin).filter(Boolean);
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...configuredOrigins])];
 const primaryClientUrl = configuredOrigins[0] || defaultAllowedOrigins[1];
+const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
 
 app.use(helmet());
 app.use(morgan('dev'));
 app.set('trust proxy', 1);
 app.use(cors({
-  origin: true,
-  credentials: false
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
+  credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(uploadsDir));
 app.locals.primaryClientUrl = primaryClientUrl;
-const PgSession = connectPgSimple(session);
 app.use(session({
-  store: new PgSession({
-    pool,
-    tableName: 'user_sessions',
-    createTableIfMissing: true
-  }),
+  ...(hasDatabaseUrl
+    ? {
+        store: new (connectPgSimple(session))({
+          pool,
+          tableName: 'user_sessions',
+          createTableIfMissing: true
+        })
+      }
+    : {}),
   secret: process.env.SESSION_SECRET || 'dev_secret',
   resave: false,
   saveUninitialized: false,
@@ -69,6 +82,9 @@ app.use(passport.session());
 app.use('/api/auth', authRoutes);
 app.use('/api/food', foodRoutes);
 app.use('/api/foods', foodRoutes);
+app.use('/api/deliveries', deliveryRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'FoodBridge API is running 🚀' });
@@ -77,6 +93,7 @@ app.get('/api/health', (req, res) => {
 app.use(errorHandler);
 
 const verifyDatabaseConnection = async () => {
+  if (!hasDatabaseUrl) return;
   await pool.query('SELECT 1');
 };
 

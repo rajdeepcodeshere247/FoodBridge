@@ -45,65 +45,71 @@ export default function Navbar() {
   return (
     <header className="fb-navbar-wrap">
       <nav className="fb-navbar">
-        <Link to="/" className="fb-brand" onClick={() => setMenuOpen(false)}>
-          <Logo />
-          <span className="brand-text">FoodBridge</span>
-        </Link>
+        <div className="fb-navbar-top">
+          <Link to="/" className="fb-brand" onClick={() => setMenuOpen(false)}>
+            <Logo />
+            <span className="brand-text">FoodBridge</span>
+          </Link>
 
-        <button type="button" className="nav-mobile-toggle" onClick={() => setMenuOpen((v) => !v)}>
-          {menuOpen ? <FiX /> : <FiMenu />}
-        </button>
+          <button type="button" className="nav-mobile-toggle" onClick={() => setMenuOpen((v) => !v)} aria-label="Toggle navigation">
+            {menuOpen ? <FiX /> : <FiMenu />}
+          </button>
+        </div>
 
         <div className={`fb-nav-links ${menuOpen ? 'is-open' : ''}`}>
-          <NavLink to="/" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-            Home
-          </NavLink>
-          <NavLink to="/foods" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-            Listings
-          </NavLink>
-          <NavLink to="/map" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-            Map
-          </NavLink>
+          <div className="fb-nav-primary">
+            <NavLink to="/" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+              Home
+            </NavLink>
+            <NavLink to="/foods" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+              Listings
+            </NavLink>
+            <NavLink to="/map" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+              Map
+            </NavLink>
 
-          {user && (
-            <>
-              <NavLink to="/add-food" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-                Donate Food
-              </NavLink>
-              <NavLink to="/foods" onClick={() => setMenuOpen(false)} className="nav-link">
-                My Listings
-              </NavLink>
-              <NavLink to="/dashboard" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-                My Deliveries
-              </NavLink>
-              <NavLink to="/profile" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
-                Profile
-              </NavLink>
-            </>
-          )}
+            {user && (
+              <>
+                <NavLink to="/add-food" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+                  Donate Food
+                </NavLink>
+                <NavLink to="/foods" onClick={() => setMenuOpen(false)} className="nav-link">
+                  My Listings
+                </NavLink>
+                <NavLink to="/dashboard" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+                  My Deliveries
+                </NavLink>
+                <NavLink to="/profile" onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+                  Profile
+                </NavLink>
+              </>
+            )}
+          </div>
 
-          <button type="button" className="nav-location-pill" onClick={requestLocation} title="Refresh precise location">
-            📍 {locationLabel}
-          </button>
+          <div className="fb-nav-actions">
+            <button type="button" className="nav-location-pill" onClick={requestLocation} title="Refresh precise location">
+              📍 {locationLabel}
+            </button>
 
-          <button
-            type="button"
-            className="nav-theme-pill"
-            onClick={() => setTheme((current) => (current === 'light' ? 'dark' : 'light'))}
-            title="Toggle theme"
-          >
-            {theme === 'dark' ? <FiSun /> : <FiMoon />}
-          </button>
+            <button
+              type="button"
+              className="nav-theme-pill"
+              onClick={() => setTheme((current) => (current === 'light' ? 'dark' : 'light'))}
+              title="Toggle theme"
+            >
+              {theme === 'dark' ? <FiSun /> : <FiMoon />}
+            </button>
 
-          {user && (
-            <div className="fb-user-chip" title={user.email}>
-              {user.avatar_url ? <img src={user.avatar_url} alt={user.name} className="fb-user-avatar" /> : <span className="fb-user-avatar-fallback">👤</span>}
-              <span>{user.name?.split(' ')[0]}</span>
+            {user && (
+              <div className="fb-user-chip" title={user.email}>
+                {user.avatar_url ? <img src={user.avatar_url} alt={user.name} className="fb-user-avatar" /> : <span className="fb-user-avatar-fallback">👤</span>}
+                <span>{user.name?.split(' ')[0]}</span>
+              </div>
+            )}
+
+            <div className="nav-auth-section">
+              <LoginButton />
             </div>
-          )}
-
-          <div className="nav-auth-section">
-            <LoginButton />
           </div>
         </div>
       </nav>

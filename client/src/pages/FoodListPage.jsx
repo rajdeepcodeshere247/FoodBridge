@@ -15,14 +15,13 @@ function FoodListPage() {
   const [loading, setLoading] = useState(true);
   const [offlineMode, setOfflineMode] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [view, setView] = useState('card');
   const [distanceFilter, setDistanceFilter] = useState('all');
   const [foodTypeFilter, setFoodTypeFilter] = useState('all');
   const [expiryFilter, setExpiryFilter] = useState('all');
   const [qualityFilter, setQualityFilter] = useState('all');
   const [sortBy, setSortBy] = useState('priority');
 
-  useScrollReveal();
+  useScrollReveal([items.length, loading]);
 
   useEffect(() => {
     let mounted = true;
@@ -195,68 +194,18 @@ function FoodListPage() {
         </div>
 
         <div className="fb-toolbar">
-          <strong>{filteredItems.length}</strong> matching listings
-          <div className="fb-toggle-group">
-            <button
-              type="button"
-              className={`fb-btn-secondary ${view === 'card' ? 'is-active' : ''}`}
-              onClick={() => setView('card')}
-            >
-              Card View
-            </button>
-            <button
-              type="button"
-              className={`fb-btn-secondary ${view === 'table' ? 'is-active' : ''}`}
-              onClick={() => setView('table')}
-            >
-              Table View
-            </button>
-          </div>
+          <strong>{filteredItems.length} listing{filteredItems.length === 1 ? "" : "s"} found</strong>
         </div>
       </section>
 
-      <section className="fb-reveal">
+      <section>
         {loading ? <LoadingSpinner /> : (
-          view === 'card' ? (
-            <FoodList
-              items={filteredItems}
-              onAcceptPickup={handleRequestFood}
-              onViewMap={handleViewMap}
-              userLocation={location}
-            />
-          ) : (
-            <div className="fb-table-wrap">
-              <table className="fb-table">
-                <thead>
-                  <tr>
-                    <th>Priority</th>
-                    <th>Food</th>
-                    <th>Distance</th>
-                    <th>Expiry</th>
-                    <th>AI Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredItems.map((item) => (
-                    <tr key={item.id}>
-                      <td><span className={`fb-priority-chip ${item.priority.level}`}>{item.priority.label}</span></td>
-                      <td>{item.title}</td>
-                      <td>{item.distanceLabel}</td>
-                      <td>{new Date(item.expiry_time).toLocaleString()}</td>
-                      <td><span className={`fb-pill fb-pill-${item.quality_status}`}>{item.quality_status}</span></td>
-                      <td>
-                        <button type="button" className="fb-btn" onClick={() => handleRequestFood(item)}>
-                          Reserve
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {!filteredItems.length && <p className="fb-empty">No food listings match your filters right now.</p>}
-            </div>
-          )
+          <FoodList
+            items={filteredItems}
+            onAcceptPickup={handleRequestFood}
+            onViewMap={handleViewMap}
+            userLocation={location}
+          />
         )}
       </section>
     </div>

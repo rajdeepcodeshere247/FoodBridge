@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-export function useScrollReveal() {
+export function useScrollReveal(deps = []) {
   useEffect(() => {
-    const elements = document.querySelectorAll('.fb-reveal');
+    const elements = document.querySelectorAll('.fb-reveal:not(.is-visible)');
     if (!elements.length) return;
 
     const observer = new IntersectionObserver(
@@ -10,6 +10,7 @@ export function useScrollReveal() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
           }
         });
       },
@@ -25,5 +26,5 @@ export function useScrollReveal() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, deps);
 }

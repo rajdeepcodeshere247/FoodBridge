@@ -7,6 +7,13 @@ const {
   updateFoodListing,
   deleteFoodListing
 } = require('../../database/queries/food.queries');
+const { uploadFoodImage, hasCloudinaryConfig } = require('../services/cloudinary.service');
+
+const buildImageDataUrl = (file) => {
+  if (!file?.buffer || !file?.mimetype) return null;
+  const encoded = file.buffer.toString('base64');
+  return `data:${file.mimetype};base64,${encoded}`;
+};
 
 const getAllFood = async (req, res) => {
   let items = await getAllAvailableFood();
@@ -64,11 +71,25 @@ const createFood = async (req, res) => {
   const parsedLatitude = Number(latitude);
   const parsedLongitude = Number(longitude);
   const normalizedExpiry = expiryTime || expiry_time;
+  let persistedImageUrl = imageUrl || null;
 
   if (!title || !quantity || !normalizedExpiry || !Number.isFinite(parsedLatitude) || !Number.isFinite(parsedLongitude)) {
     return res.status(400).json({
       error: 'title, quantity, expiry_time (or expiryTime), latitude, and longitude are required.'
     });
+  }
+
+  if (req.file) {
+    if (hasCloudinaryConfig()) {
+      try {
+        persistedImageUrl = await uploadFoodImage(req.file);
+      } catch (error) {
+        console.warn('Cloudinary upload failed, using inline image fallback:', error.message);
+        persistedImageUrl = buildImageDataUrl(req.file);
+      }
+    } else {
+      persistedImageUrl = buildImageDataUrl(req.file);
+    }
   }
 
   const item = await createFoodListing({
@@ -78,7 +99,7 @@ const createFood = async (req, res) => {
     quantity,
     foodType: foodType || food_type || null,
     expiryTime: normalizedExpiry,
-    imageUrl: req.file ? `/uploads/${req.file.filename}` : imageUrl || null,
+    imageUrl: persistedImageUrl,
     latitude: parsedLatitude,
     longitude: parsedLongitude,
     address: address || location_text || null

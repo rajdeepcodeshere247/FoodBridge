@@ -1,10 +1,11 @@
 // AI food quality check route
 const express = require('express');
 const router = express.Router();
-// const aiController = require('../controllers/ai.controller');
-// const upload = require('../config/multer.config');
+const notImplemented = (req, res) => {
+  res.status(501).json({ error: 'AI quality check is not implemented yet.' });
+};
 
 // POST /api/ai/check-quality — Upload image, get freshness analysis back
-router.post('/check-quality', /* upload.single('image'), aiController.checkFoodQuality */);
+router.post('/check-quality', notImplemented);
 
 module.exports = router;

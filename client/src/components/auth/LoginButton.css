@@ -86,3 +86,16 @@
   opacity: 0.6;
   cursor: wait;
 }
+@media (max-width: 768px) {
+  .fb-auth-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 14px;
+  }
+
+  .fb-auth-btn .btn-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

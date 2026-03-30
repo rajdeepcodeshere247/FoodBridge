@@ -28,19 +28,14 @@ const baseURL = resolveBaseURL();
 
 const api = axios.create({
   baseURL,
-  withCredentials: false,
+  withCredentials: true,
   headers: { 'Content-Type': 'application/json' }
 });
 
 // Global error interceptor
 api.interceptors.response.use(
   (res) => res,
-  (err) => {
-    if (err.response?.status === 401) {
-      window.location.href = '/login';
-    }
-    return Promise.reject(err);
-  }
+  (err) => Promise.reject(err)
 );
 
 export default api;

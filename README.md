@@ -115,9 +115,72 @@ See `.env.example` for all required variables. Key ones:
 | `GOOGLE_CALLBACK_URL` | `http://localhost:5000/api/auth/google/callback` |
 | `SESSION_SECRET` | Any long random string |
 | `AI_API_KEY` | Your AI provider API key |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (for hosted listing images) |
+| `CLOUDINARY_UPLOAD_PRESET` | Unsigned Cloudinary upload preset name |
+| `CLOUDINARY_FOLDER` | Optional Cloudinary folder for uploaded listing images |
 | `CLIENT_URL` | `http://localhost:3000` |
 | `REACT_APP_API_BASE_URL` | Frontend API base URL (e.g. `https://your-backend.vercel.app/api`) |
 | `PG_SSL_REJECT_UNAUTHORIZED` | Set `false` for providers using self-signed/intermediate cert chains |
+
+---
+
+## 🛠️ Backend Debug Checklist
+
+If your backend fails locally or on Vercel, check these first:
+
+1. **Health endpoint:** `GET /api/health` should return status JSON.
+2. **Database endpoint:** `GET /api/health/db` should return `{ "database": "connected" }`.
+3. **Google auth availability:** `GET /api/auth/google/status` should return `{ "enabled": true }`.
+4. **Session secret present:** ensure `SESSION_SECRET` is set in local `.env` and Vercel envs.
+5. **Allowed frontend origin:** ensure `CLIENT_URL` contains your frontend origin exactly.
+
+---
+
+## ▲ Deploying Google Authentication on Vercel
+
+### 1) Deploy backend (`server/`) to Vercel
+- Create a separate Vercel project pointing to the `server` directory.
+- Ensure `server/vercel.json` is included.
+
+### 2) Set backend environment variables in Vercel
+
+Set these in **Vercel Project → Settings → Environment Variables**:
+
+- `NODE_ENV=production`
+- `DATABASE_URL=<your_postgres_url>`
+- `PG_SSL_REJECT_UNAUTHORIZED=false` (or `true` if your provider requires strict cert validation)
+- `SESSION_SECRET=<long-random-secret>`
+- `CLIENT_URL=https://<your-frontend>.vercel.app`
+- `GOOGLE_CLIENT_ID=<google-client-id>`
+- `GOOGLE_CLIENT_SECRET=<google-client-secret>`
+- Optional: `GOOGLE_CALLBACK_URL=https://<your-backend>.vercel.app/api/auth/google/callback`
+
+> If `GOOGLE_CALLBACK_URL` is not set, the server automatically falls back to `https://$VERCEL_URL/api/auth/google/callback`.
+
+### 3) Configure Google Cloud OAuth
+
+In **Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID**:
+
+- **Authorized JavaScript origin**:
+  - `https://<your-frontend>.vercel.app`
+- **Authorized redirect URI**:
+  - `https://<your-backend>.vercel.app/api/auth/google/callback`
+
+### 4) Configure frontend environment
+
+In your frontend Vercel project env vars:
+
+- `REACT_APP_API_BASE_URL=https://<your-backend>.vercel.app/api`
+- Optional: `REACT_APP_ENABLE_GOOGLE_AUTH=true`
+
+### 5) Verify end-to-end
+
+1. Open frontend login page.
+2. Click **Continue with Google**.
+3. After Google sign-in, you should be redirected to `/dashboard`.
+4. Confirm session with `GET /api/auth/me`.
+
+> ✅ Food images are persisted in PostgreSQL as `data:image/...;base64,...` in `food_listings.image_url`, so listings still render donor-uploaded images across serverless restarts.
 
 ---
 

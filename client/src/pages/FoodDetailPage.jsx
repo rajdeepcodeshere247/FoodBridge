@@ -5,6 +5,7 @@ import ExpiryTimer from '../components/common/ExpiryTimer';
 import FoodQualityBadge from '../components/food/FoodQualityBadge';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { getFoodById } from '../services/food.service';
+import { resolveImageUrl } from '../utils/helpers';
 
 function FoodDetailPage() {
   const { id } = useParams();
@@ -23,10 +24,12 @@ function FoodDetailPage() {
   if (loading) return <LoadingSpinner label="Loading food details..." />;
   if (!food) return <p className="fb-empty">Food listing not found.</p>;
 
+  const imageUrl = resolveImageUrl(food.image_url);
+
   return (
     <div className="fb-page fb-detail">
       <img
-        src={food.image_url || 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1200&q=80'}
+        src={imageUrl || 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1200&q=80'}
         alt={food.title}
         className="fb-detail-img fb-reveal"
       />

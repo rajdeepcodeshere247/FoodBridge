@@ -1,19 +1,26 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMapPin, FiNavigation } from 'react-icons/fi';
-import { truncate, getNavigationUrl } from '../../utils/helpers';
+import { truncate, getNavigationUrl, resolveImageUrl } from '../../utils/helpers';
 import ExpiryTimer from './ExpiryTimer';
 import FoodQualityBadge from '../food/FoodQualityBadge';
 
 export default function FoodCard({ food, onAcceptPickup, onViewMap, userLocation }) {
   const navigationUrl = getNavigationUrl(food, userLocation);
+  const fallbackImage = 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=900&q=80';
+  const normalizedImageUrl = useMemo(() => resolveImageUrl(food.image_url), [food.image_url]);
+  const [imageSrc, setImageSrc] = useState(normalizedImageUrl || fallbackImage);
+  useEffect(() => {
+    setImageSrc(normalizedImageUrl || fallbackImage);
+  }, [normalizedImageUrl]);
 
   return (
-    <article className={`fb-card fb-reveal priority-${food.priority?.level || 'safe'}`}>
+    <article className={`fb-card priority-${food.priority?.level || 'safe'}`}>
       <img
-        src={food.image_url || 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=900&q=80'}
+        src={imageSrc}
         alt={food.title}
         className="fb-card-img"
+        onError={() => setImageSrc(fallbackImage)}
       />
       <div className="fb-card-body">
         <div className="fb-card-topline">

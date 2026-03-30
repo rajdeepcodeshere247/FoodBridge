@@ -93,3 +93,24 @@ export const getNavigationUrl = (food, location) => {
 
   return `https://www.openstreetmap.org/?mlat=${food.latitude}&mlon=${food.longitude}#map=16/${food.latitude}/${food.longitude}`;
 };
+
+
+export const resolveImageUrl = (imageUrl) => {
+  if (!imageUrl) return '';
+  const sanitizedPath = String(imageUrl).replace(/\\/g, '/').trim();
+  if (sanitizedPath.startsWith('data:image/')) return sanitizedPath;
+  if (/^https?:\/\//i.test(sanitizedPath)) return sanitizedPath;
+  if (sanitizedPath.startsWith('/var/task/') || sanitizedPath.startsWith('/tmp/')) return '';
+
+  const fromEnv = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/+$/, '');
+  if (fromEnv) {
+    const originFromEnv = fromEnv.endsWith('/api') ? fromEnv.slice(0, -4) : fromEnv;
+    return `${originFromEnv}${sanitizedPath.startsWith('/') ? '' : '/'}${sanitizedPath}`;
+  }
+
+  if (typeof window !== 'undefined' && window.location.hostname.toLowerCase().endsWith('.vercel.app')) {
+    return `https://foodbridge-backend.vercel.app${sanitizedPath.startsWith('/') ? '' : '/'}${sanitizedPath}`;
+  }
+
+  return sanitizedPath;
+};

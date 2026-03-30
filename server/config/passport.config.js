@@ -2,15 +2,28 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { findUserByGoogleId, createUser, findUserById } = require('../../database/queries/user.queries');
 
+const resolveGoogleCallbackUrl = () => {
+  if (process.env.GOOGLE_CALLBACK_URL) return process.env.GOOGLE_CALLBACK_URL;
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}/api/auth/google/callback`;
+  }
+
+  const port = process.env.PORT || '5000';
+  return `http://localhost:${port}/api/auth/google/callback`;
+};
+
 const hasGoogleOauthConfig = Boolean(
-  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CALLBACK_URL
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
 );
 
 if (hasGoogleOauthConfig) {
+  const callbackURL = resolveGoogleCallbackUrl();
+
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL
+    callbackURL
   }, async (accessToken, refreshToken, profile, done) => {
     try {
       const googleId = profile.id;

@@ -4,12 +4,13 @@ const authController = require('../controllers/auth.controller');
 
 const router = express.Router();
 const hasGoogleOauthConfig = Boolean(
-  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CALLBACK_URL
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
 );
 const getClientUrl = (req) => req.app?.locals?.primaryClientUrl || 'https://food-b-ridge-demo.vercel.app';
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.get('/google/status', (req, res) => res.json({ enabled: hasGoogleOauthConfig }));
 
 router.get('/google', (req, res, next) => {
   if (!hasGoogleOauthConfig) {
