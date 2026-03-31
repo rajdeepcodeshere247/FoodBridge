@@ -14,6 +14,7 @@ const foodRoutes = require('./routes/food.routes');
 const deliveryRoutes = require('./routes/delivery.routes');
 const aiRoutes = require('./routes/ai.routes');
 const userRoutes = require('./routes/user.routes');
+const donationRoutes = require('./routes/donation.routes');
 const errorHandler = require('./middleware/error.middleware');
 require('./config/passport.config');
 
@@ -85,6 +86,7 @@ app.use('/api/foods', foodRoutes);
 app.use('/api/deliveries', deliveryRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/donations', donationRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'FoodBridge API is running 🚀' });

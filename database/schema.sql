@@ -49,6 +49,24 @@ CREATE TABLE IF NOT EXISTS deliveries (
   delivered_at    TIMESTAMP
 );
 
+
+-- ─── Monetary Donations ──────────────────────────────
+CREATE TABLE IF NOT EXISTS donations (
+  id                SERIAL PRIMARY KEY,
+  donor_name        VARCHAR(255) NOT NULL,
+  donor_email       VARCHAR(255) NOT NULL,
+  amount            DECIMAL(10,2) NOT NULL CHECK (amount > 0),
+  currency          VARCHAR(10) DEFAULT 'INR',
+  message           TEXT,
+  payment_gateway   VARCHAR(50) DEFAULT 'razorpay',
+  payment_method    VARCHAR(50),
+  payment_order_id  VARCHAR(255),
+  payment_id        VARCHAR(255),
+  payment_status    VARCHAR(50) DEFAULT 'created' CHECK (payment_status IN ('created', 'pending', 'paid', 'failed')),
+  paid_at           TIMESTAMP,
+  created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- ─── Session Store (express-session + connect-pg-simple) ──
 CREATE TABLE IF NOT EXISTS user_sessions (
   sid       varchar NOT NULL COLLATE "default",
@@ -75,3 +93,4 @@ CREATE INDEX IF NOT EXISTS idx_food_donor ON food_listings(donor_id);
 CREATE INDEX IF NOT EXISTS idx_food_location ON food_listings(latitude, longitude);
 CREATE INDEX IF NOT EXISTS idx_delivery_volunteer ON deliveries(volunteer_id);
 CREATE INDEX IF NOT EXISTS idx_delivery_food ON deliveries(food_id);
+CREATE INDEX IF NOT EXISTS idx_donations_status ON donations(payment_status);

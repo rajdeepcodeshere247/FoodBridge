@@ -12,6 +12,9 @@ router.get('/', asyncHandler(foodController.getAllFood));
 // GET /api/food/nearby — Get food near user's location (?lat=&lng=&radius=)
 router.get('/nearby', asyncHandler(foodController.getNearbyFood));
 
+// GET /api/food/geocode — Convert address to coordinates
+router.get('/geocode', asyncHandler(foodController.geocodeAddress));
+
 // GET /api/food/:id — Get single food listing
 router.get('/:id', asyncHandler(foodController.getFoodById));
 

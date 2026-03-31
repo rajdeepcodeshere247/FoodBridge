@@ -3,15 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useAuth } from '../context/AuthContext';
 import { useLocationContext } from '../context/LocationContext';
-import { useAuth } from '../context/AuthContext'; 
 import { getAllFood, getNearbyFood } from '../services/food.service';
 import { calculateDistanceKm, getPriorityMeta, inferFoodType, normalizeQualityStatus } from '../utils/helpers';
 import './FoodListPage.css'; 
 
-
-/* ─── NEW: Sexy Custom Food Card Component ─── */
-function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
+export function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
   const isOwner = user && (item.donor_id === user.id || item.user_id === user.id);
 
   const getQualityColor = (status) => {
@@ -20,7 +18,7 @@ function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
     return 'badge-spoiled';
   };
 
-  // UPDATED: Format exact time remaining in Days
+  // Format exact time remaining in Days
   const formatTimeLeft = (expiryDate) => {
     if (!expiryDate) return 'Unknown';
     const diff = new Date(expiryDate) - new Date();
@@ -32,11 +30,10 @@ function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
     if (days >= 1) {
       return `${days} day${days > 1 ? 's' : ''}`;
     }
-    // Fallback to hours if less than 1 day remains
     return `${hours} hour${hours > 1 ? 's' : ''}`;
   };
 
-  // UPDATED: Robust location check to find your backend's specific location key
+  // Robust location check to find your backend's specific location key
   const displayLocation = 
     item.location_text || 
     item.address || 
@@ -120,7 +117,7 @@ function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
   );
 }
 
-/* ─── Main Page Component ─── */
+/* ─── MAIN PAGE COMPONENT ─── */
 export default function FoodListPage() {
   const navigate = useNavigate();
   const { location } = useLocationContext();
@@ -210,6 +207,12 @@ export default function FoodListPage() {
     const expiryLimitMinutes = { '1h': 60, '3h': 180, '6h': 360 };
 
     return preparedItems.filter((item) => {
+      
+      // 1. GLOBALLY REMOVE EXPIRED ITEMS
+      if (item.status === 'expired') return false;
+      if (item.expiry_time && new Date(item.expiry_time) < now) return false;
+
+      // 2. Apply user selected filters
       const query = searchText.trim().toLowerCase();
       const textMatch = !query || (item.title || '').toLowerCase().includes(query) || (item.location_text || '').toLowerCase().includes(query);
       const distanceMatch = distanceFilter === 'all' || (typeof item.distanceKm === 'number' && item.distanceKm <= Number(distanceFilter));

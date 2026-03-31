@@ -36,7 +36,7 @@ export default function Navbar() {
     <header className="fb-navbar-wrap">
       <nav className="fb-navbar">
         
-        {/* Left: Brand Section (Removed redundant text) */}
+        {/* Left: Brand Section */}
         <div className="fb-brand-section">
           <Link to="/" className="fb-brand">
             <img src="/logo.webp" alt="FoodBridge" className="fb-logo-img" />
