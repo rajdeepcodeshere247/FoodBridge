@@ -5,6 +5,35 @@
 ![FoodBridge logo](client/public/logo.webp)
 
 ---
+### 🌐 FoodBridge Production URL 
+
+**Base URLs:**
+* **Frontend:** `https://foodbridge-backend.vercel.app`
+* **Backend (API Base):** `https://foodbridge-backend.vercel.app/api`
+
+| Category | Method | Full URL | Description |
+| :--- | :--- | :--- | :--- |
+| **Frontend** | `GET` | `https://foodbridge-backend.vercel.app` | Main Application Entry Point |
+| **Auth** | `POST` | `https://foodbridge-backend.vercel.app/api/auth/register` | Create a new user account |
+| | `POST` | `https://foodbridge-backend.vercel.app/api/auth/login` | User login / session start |
+| | `GET` | `https://foodbridge-backend.vercel.app/api/auth/google` | Initiate Google OAuth flow |
+| | `GET` | `https://foodbridge-backend.vercel.app/api/auth/google/callback` | OAuth redirect handler |
+| | `GET` | `https://foodbridge-backend.vercel.app/api/auth/google/status` | Check OAuth configuration |
+| | `GET` | `https://foodbridge-backend.vercel.app/api/auth/me` | Fetch current session profile |
+| | `POST` | `https://foodbridge-backend.vercel.app/api/auth/logout` | Terminate session |
+| **Food** | `GET` | `https://foodbridge-backend.vercel.app/api/food` | List all available food items |
+| | `GET` | `https://foodbridge-backend.vercel.app/api/food/nearby` | Filter by `lat`, `lng`, `radius` |
+| | `GET` | `https://foodbridge-backend.vercel.app/api/food/geocode` | Address-to-coordinates lookup |
+| | `GET` | `https://foodbridge-backend.vercel.app/api/food/:id` | Get specific listing details |
+| | `POST` | `https://foodbridge-backend.vercel.app/api/food` | Create new listing (Multipart) |
+| | `PUT` | `https://foodbridge-backend.vercel.app/api/food/:id` | Update an existing listing |
+| | `DELETE` | `https://foodbridge-backend.vercel.app/api/food/:id` | Remove a listing |
+| **Donations**| `POST` | `https://foodbridge-backend.vercel.app/api/donations/create-order` | Generate Razorpay order ID |
+| | `POST` | `https://foodbridge-backend.vercel.app/api/donations/verify-payment` | Verify and save donation |
+| **Health** | `GET` | `https://foodbridge-backend.vercel.app/api/health` | Backend Heartbeat check |
+| | `GET` | `https://foodbridge-backend.vercel.app/api/health/db` | Database connectivity check |
+
+---
 
 ## Table of Contents
 
