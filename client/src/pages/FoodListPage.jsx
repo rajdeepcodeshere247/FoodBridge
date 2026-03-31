@@ -1,4 +1,4 @@
-from this jsx import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FoodList from '../components/food/FoodList';
