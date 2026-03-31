@@ -121,6 +121,8 @@ See `.env.example` for all required variables. Key ones:
 | `CLIENT_URL` | `http://localhost:3000` |
 | `REACT_APP_API_BASE_URL` | Frontend API base URL (e.g. `https://your-backend.vercel.app/api`) |
 | `PG_SSL_REJECT_UNAUTHORIZED` | Set `false` for providers using self-signed/intermediate cert chains |
+| `RAZORPAY_KEY_ID` | Razorpay public key for checkout integration |
+| `RAZORPAY_KEY_SECRET` | Razorpay secret key for order creation + signature verification |
 
 ---
 
@@ -204,6 +206,8 @@ In your frontend Vercel project env vars:
 | POST | `/api/deliveries` | Volunteer claims a pickup |
 | PUT | `/api/deliveries/:id/status` | Update delivery status |
 | POST | `/api/ai/check-quality` | AI food quality check |
+| POST | `/api/donations/create-order` | Create donation order for Razorpay checkout |
+| POST | `/api/donations/verify-payment` | Verify Razorpay signature and mark donation paid |
 
 ---
 
@@ -243,6 +247,7 @@ Branch naming:
 | `users` | Stores donor/volunteer/NGO accounts (via Google OAuth) |
 | `food_listings` | Food items posted for donation (with location, expiry, AI quality) |
 | `deliveries` | Tracks volunteer pickups and delivery status |
+| `donations` | Stores money donations and payment status |
 
 ---
 

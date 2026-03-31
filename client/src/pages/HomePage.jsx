@@ -5,7 +5,7 @@ import FoodList from '../components/food/FoodList';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useLocationContext } from '../context/LocationContext';
 import { getAllFood } from '../services/food.service';
-import './HomePage.css'; // Make sure to create this file
+import './HomePage.css'; 
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -30,8 +30,10 @@ function HomePage() {
   const { location, status } = useLocationContext();
   
   const { scrollY } = useScroll();
-  // Parallax: Image moves at 30% speed
+  
+  // Parallax: Background image moves slower than scroll
   const backgroundY = useTransform(scrollY, [0, 1000], ["0%", "30%"]);
+  // Hero content fades out as user scrolls down
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   useEffect(() => {
@@ -45,7 +47,8 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="fb-main-container">
+    /* Wrap in fb-home-wrapper to handle navbar spacing */
+    <div className="fb-home-wrapper">
       
       {/* --- HERO SECTION --- */}
       <section className="fb-hero-section">
@@ -80,7 +83,8 @@ function HomePage() {
 
           <motion.div variants={fadeInUp} className="fb-cta-group">
             <Link to="/foods" className="fb-btn-primary">Browse Food</Link>
-            <Link to="/add-food" className="fb-btn-glass">Donate Now</Link>
+            <Link to="/add-food" className="fb-btn-glass">Donate Food</Link>
+            <Link to="/donate-money" className="fb-btn-glass">Donate Money</Link>
           </motion.div>
 
           {status === 'success' && location && (
@@ -90,13 +94,15 @@ function HomePage() {
           )}
         </motion.div>
 
-        {/* Floating Scroll Indicator */}
+        {/* Animated Scroll Indicator */}
         <motion.div 
           animate={{ y: [0, 12, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
           className="fb-scroll-indicator"
         >
-          <div className="fb-mouse"><div className="fb-wheel" /></div>
+          <div className="fb-mouse">
+            <div className="fb-wheel" />
+          </div>
         </motion.div>
       </section>
 

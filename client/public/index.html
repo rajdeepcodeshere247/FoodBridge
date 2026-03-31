@@ -2,97 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="https://img.icons8.com/fluency/48/restaurant.png" />
-    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/restaurant.png" />
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#22c55e" />
-
-    <title>FoodBridge | Connecting Surplus Food with People in Need</title>
-    <meta name="title" content="FoodBridge | Connecting Surplus Food with People in Need" />
-    <meta name="description" content="FoodBridge is a platform that connects food donors (restaurants, events), volunteers (delivery), and NGOs to reduce food waste and feed people using technology." />
-
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://foodbridge-jadavpur.vercel.app/" />
-    <meta property="og:title" content="FoodBridge | Reducing Waste & Feeding Communities" />
-    <meta property="og:description" content="Join FoodBridge to help redistribute surplus food. We bridge the gap between donors, volunteers, and NGOs through technology." />
-    <meta property="og:image" content="https://img.icons8.com/fluency/200/restaurant.png" />
-
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="FoodBridge | Reducing Waste & Feeding Communities" />
-    <meta property="twitter:description" content="A technology-driven platform connecting food donors with volunteers and NGOs to fight hunger." />
-    <meta property="twitter:image" content="https://img.icons8.com/fluency/200/restaurant.png" />
-
-    <link 
-      rel="stylesheet" 
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
-      crossorigin="" 
-    />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <style>
-      /* Base styles and Initial Loader */
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background-color: #f9fafb;
-      }
-
-      #initial-loader {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        width: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        background: #ffffff;
-        z-index: 9999;
-      }
-
-      .spinner {
-        width: 50px;
-        height: 50px;
-        border: 5px solid #f3f3f3;
-        border-top: 5px solid #22c55e; /* FoodBridge Green */
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
-      .loader-text {
-        margin-top: 15px;
-        font-weight: 600;
-        color: #166534;
-        letter-spacing: 1px;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    </style>
+    <meta name="description" content="FoodBridge — Connecting surplus food with people in need" />
+    <title>FoodBridge</title>
+    <!-- Leaflet CSS (for map) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   </head>
   <body>
-    <noscript>
-      <div style="text-align: center; padding: 50px; color: #166534;">
-        <img src="https://img.icons8.com/fluency/96/restaurant.png" alt="Logo" />
-        <h1>JavaScript Required</h1>
-        <p>FoodBridge uses advanced technology to coordinate food redistribution. Please enable JavaScript to continue.</p>
-      </div>
-    </noscript>
-
-    <div id="root">
-      <div id="initial-loader">
-        <div class="spinner"></div>
-        <div class="loader-text">FOODBRIDGE</div>
-      </div>
-    </div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
   </body>
 </html>

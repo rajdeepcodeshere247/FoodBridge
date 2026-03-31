@@ -1,16 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FoodList from '../components/food/FoodList';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useAuth } from '../context/AuthContext';
 import { useLocationContext } from '../context/LocationContext';
-import { getAllFood, getNearbyFood } from '../services/food.service';
+import { getAllFood } from '../services/food.service';
 import { calculateDistanceKm, getPriorityMeta, inferFoodType, normalizeQualityStatus } from '../utils/helpers';
 
 function FoodListPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { location } = useLocationContext();
+  const [searchParams] = useSearchParams();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [offlineMode, setOfflineMode] = useState(false);
@@ -20,6 +23,7 @@ function FoodListPage() {
   const [expiryFilter, setExpiryFilter] = useState('all');
   const [qualityFilter, setQualityFilter] = useState('all');
   const [sortBy, setSortBy] = useState('priority');
+  const isMyListingsView = searchParams.get('mine') === '1';
 
   useScrollReveal([items.length, loading]);
 
@@ -29,9 +33,7 @@ function FoodListPage() {
     const loadListings = async () => {
       setLoading(true);
       try {
-        const response = location
-          ? await getNearbyFood(location.lat, location.lng, 10)
-          : await getAllFood();
+        const response = await getAllFood();
 
         const payload = Array.isArray(response.data) ? response.data : (response.data?.items || []);
         localStorage.setItem('fb-cached-listings', JSON.stringify(payload));
@@ -58,9 +60,7 @@ function FoodListPage() {
 
     const poll = setInterval(async () => {
       try {
-        const response = location
-          ? await getNearbyFood(location.lat, location.lng, 10)
-          : await getAllFood();
+        const response = await getAllFood();
         const payload = Array.isArray(response.data) ? response.data : (response.data?.items || []);
         setItems((current) => {
           if (payload.length > current.length) {
@@ -77,7 +77,7 @@ function FoodListPage() {
       mounted = false;
       clearInterval(poll);
     };
-  }, [location]);
+  }, []);
 
   const preparedItems = useMemo(() => items.map((item) => {
     const distanceKm = calculateDistanceKm(location, { lat: item.latitude, lng: item.longitude });
@@ -121,7 +121,12 @@ function FoodListPage() {
         expiryMatch = minutesLeft > 0 && minutesLeft <= expiryLimitMinutes[expiryFilter];
       }
 
-      return textMatch && distanceMatch && typeMatch && qualityMatch && expiryMatch;
+      const donorId = item.donor_id ?? item.donorId ?? item.user_id ?? item.userId;
+      const userId = user?.id;
+      const isOwnedByCurrentUser = userId != null && donorId != null && String(donorId) === String(userId);
+      const ownerMatch = !isMyListingsView || isOwnedByCurrentUser;
+
+      return textMatch && distanceMatch && typeMatch && qualityMatch && expiryMatch && ownerMatch;
     }).sort((a, b) => {
       if (sortBy === 'distance') {
         return (a.distanceKm ?? Number.POSITIVE_INFINITY) - (b.distanceKm ?? Number.POSITIVE_INFINITY);
@@ -137,7 +142,7 @@ function FoodListPage() {
 
       return (a.distanceKm ?? Number.POSITIVE_INFINITY) - (b.distanceKm ?? Number.POSITIVE_INFINITY);
     });
-  }, [preparedItems, searchText, distanceFilter, foodTypeFilter, qualityFilter, expiryFilter, sortBy]);
+  }, [preparedItems, searchText, distanceFilter, foodTypeFilter, qualityFilter, expiryFilter, sortBy, isMyListingsView, user?.id]);
 
   const handleRequestFood = (food) => {
     toast.success(`Food request sent for ${food.title}.`);
@@ -150,8 +155,12 @@ function FoodListPage() {
   return (
     <div className="fb-page">
       <div className="fb-reveal">
-        <h1>Smart Food Queue</h1>
-        <p className="fb-subtitle">Fast decisions first: urgent items rise to the top, with route-ready actions.</p>
+        <h1>{isMyListingsView ? 'My Food Donations' : 'Food Listings'}</h1>
+        <p className="fb-subtitle">
+          {isMyListingsView
+            ? 'Only the food donated by your account is shown here.'
+            : 'See all available donated food and quickly find what you need.'}
+        </p>
         {offlineMode && <p className="fb-notice">📶 Low internet mode: showing last cached listings.</p>}
       </div>
 
