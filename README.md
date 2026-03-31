@@ -13,7 +13,7 @@
 
 | Category | Method | Full URL | Description |
 | :--- | :--- | :--- | :--- |
-| **Frontend** | `GET` | `https://foodbridge-backend.vercel.app` | Main Application Entry Point |
+| **Frontend** | `GET` | `https://food-bridge-srijan.vercel.app` | Main Application Entry Point |
 | **Auth** | `POST` | `https://foodbridge-backend.vercel.app/api/auth/register` | Create a new user account |
 | | `POST` | `https://foodbridge-backend.vercel.app/api/auth/login` | User login / session start |
 | | `GET` | `https://foodbridge-backend.vercel.app/api/auth/google` | Initiate Google OAuth flow |
