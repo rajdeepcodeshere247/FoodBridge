@@ -153,16 +153,14 @@ function FoodListPage() {
   };
 
   return (
-    <div className="fb-page">
-      <div className="fb-reveal">
-        <h1>{isMyListingsView ? 'My Food Donations' : 'Food Listings'}</h1>
-        <p className="fb-subtitle">
-          {isMyListingsView
-            ? 'Only the food donated by your account is shown here.'
-            : 'See all available donated food and quickly find what you need.'}
-        </p>
-        {offlineMode && <p className="fb-notice">📶 Low internet mode: showing last cached listings.</p>}
-      </div>
+    <>
+      <h1>{isMyListingsView ? 'My Food Donations' : 'Food Listings'}</h1>
+      <p className="fb-subtitle">
+        {isMyListingsView
+          ? 'Only the food donated by your account is shown here.'
+          : 'See all available donated food and quickly find what you need.'}
+      </p>
+      {offlineMode && <p className="fb-notice">📶 Low internet mode: showing last cached listings.</p>}
 
       <section className="fb-panel fb-reveal">
         <div className="fb-filters-grid">
@@ -217,7 +215,7 @@ function FoodListPage() {
           />
         )}
       </section>
-    </div>
+    </>
   );
 }
 
