@@ -44,15 +44,15 @@ a { text-decoration: none; color: inherit; }
 
 /* --- GLOBAL PAGE WRAPPER (Solves Navbar Overlap) --- */
 .fb-page-container {
-  padding-top: var(--nav-height);
-  min-height: 100vh;
+  /* REMOVED: padding-top: var(--nav-height); */
+  min-height: calc(100vh - var(--nav-height)); /* Adjusted to prevent unnecessary scrolling */
   display: flex;
   flex-direction: column;
 }
 
 @media (max-width: 1100px) {
   :root { --nav-height: 72px; }
-  .fb-page-container { padding-top: var(--nav-height); }
+  /* REMOVED: .fb-page-container { padding-top: var(--nav-height); } */
 }
 
 .fb-main {

@@ -13,6 +13,23 @@
   --border:      rgba(16,185,129,0.2);
   --glass:       rgba(255,255,255,0.65);
   --shadow-lg:   0 32px 80px rgba(16,185,129,0.18), 0 8px 24px rgba(0,0,0,0.06);
+  
+  /* Dynamic Variables for Inputs & Borders */
+  --input-bg:    rgba(255,255,255,0.8);
+  --line-color:  #e2e8f0;
+}
+
+/* ─── Dark Mode Overrides ─────────────────────────────────── */
+body.fb-dark {
+  --cream:       #06121d; /* Deep blue background */
+  --ink:         #f8fafc; /* Light text */
+  --muted:       #94a3b8; /* Muted text */
+  --glass:       rgba(15, 23, 42, 0.75); /* Dark frosted glass */
+  --border:      rgba(16, 185, 129, 0.15);
+  --shadow-lg:   0 32px 80px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2);
+  
+  --input-bg:    rgba(11, 27, 42, 0.8); /* Dark input backgrounds */
+  --line-color:  #1f3344; /* Dark border lines */
 }
 
 /* ─── Page Shell ──────────────────────────────────────────── */
@@ -27,6 +44,7 @@
   overflow: hidden;
   background: var(--cream);
   font-family: 'DM Sans', sans-serif;
+  transition: background 0.3s ease;
 }
 
 /* animated mesh backdrop */
@@ -78,7 +96,7 @@
   box-shadow: var(--shadow-lg);
   animation: cardEntry 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s both;
   transform-style: preserve-3d;
-  transition: transform 0.1s ease, box-shadow 0.3s ease;
+  transition: transform 0.1s ease, box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
 @keyframes cardEntry {
@@ -146,6 +164,7 @@
   color: var(--ink);
   line-height: 1.2;
   margin: 0 0 0.5rem;
+  transition: color 0.3s ease;
 }
 
 .fb-donate-card h1 span {
@@ -157,6 +176,7 @@
   font-size: 0.93rem;
   line-height: 1.65;
   margin-bottom: 0.2rem;
+  transition: color 0.3s ease;
 }
 
 /* ─── Preset Amounts ──────────────────────────────────────── */
@@ -227,10 +247,11 @@
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  color: #1e293b;
+  color: var(--ink); /* Dynamic color */
   font-weight: 600;
   font-size: 0.88rem;
   letter-spacing: 0.01em;
+  transition: color 0.3s ease;
 }
 
 .fb-input-wrap {
@@ -252,18 +273,19 @@
 .fb-donate-grid textarea {
   width: 100%;
   box-sizing: border-box;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--line-color); /* Dynamic border */
   border-radius: 14px;
   padding: 0.82rem 0.95rem 0.82rem 2.5rem;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.93rem;
-  background: rgba(255,255,255,0.8);
-  color: var(--ink);
+  background: var(--input-bg); /* Dynamic background */
+  color: var(--ink); /* Dynamic text color */
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
     transform 0.2s ease,
-    background 0.25s ease;
+    background 0.3s ease,
+    color 0.3s ease;
   outline: none;
 }
 
@@ -276,8 +298,13 @@
 .fb-donate-grid textarea:focus {
   border-color: var(--emerald);
   box-shadow: 0 0 0 4px rgba(16,185,129,0.12);
-  background: #fff;
   transform: translateY(-1px);
+}
+
+/* Keep input backgrounds solid when focused in light mode, but maintain dark theme in dark mode */
+body:not(.fb-dark) .fb-donate-grid input:focus,
+body:not(.fb-dark) .fb-donate-grid textarea:focus {
+  background: #fff; 
 }
 
 .fb-donate-grid input:focus ~ .fb-input-icon,
@@ -296,6 +323,7 @@
   color: var(--muted);
   font-size: 0.8rem;
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .fb-divider::before,
@@ -303,7 +331,8 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  background: linear-gradient(90deg, transparent, var(--line-color), transparent); /* Dynamic line */
+  transition: background 0.3s ease;
 }
 
 /* ─── CTA Button ──────────────────────────────────────────── */
@@ -406,6 +435,7 @@
   font-size: 0.78rem;
   font-weight: 500;
   color: var(--muted);
+  transition: color 0.3s ease;
 }
 
 .fb-trust-item svg {
@@ -444,6 +474,10 @@
   animation: splashIn 0.5s ease both;
 }
 
+body.fb-dark .fb-success-splash {
+  background: rgba(6, 18, 29, 0.9);
+}
+
 @keyframes splashIn {
   from { opacity: 0; transform: scale(1.05); }
   to   { opacity: 1; transform: scale(1); }
@@ -466,7 +500,14 @@
   margin: 1rem 0 0.5rem;
 }
 
-.fb-success-splash p { color: var(--muted); font-size: 0.95rem; }
+body.fb-dark .fb-success-splash h2 {
+  color: var(--emerald);
+}
+
+.fb-success-splash p { 
+  color: var(--muted); 
+  font-size: 0.95rem; 
+}
 
 /* ─── Responsive ──────────────────────────────────────────── */
 @media (max-width: 700px) {

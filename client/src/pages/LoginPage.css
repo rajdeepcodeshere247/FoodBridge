@@ -1,21 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-/* ─── Root Tokens ─────────────────────────────────────── */
+/* ─── Root Tokens (Light Mode Default) ───────────────── */
 :root {
-  /* Perfectly matches main dark theme background */
+  --lp-bg-deep:    #f8fafc; /* Light slate background */
+  --lp-bg-mid:     #f1f5f9; /* Slightly darker for the illustration side */
+  --lp-bg-card:    #ffffff; /* White for inputs and cards */
+  
+  --lp-teal:       #10b981;
+  --lp-teal-glow:  #10b98140;
+  --lp-teal-soft:  #0d9e6e;
+  --lp-gold:       #f4b942;
+  
+  --lp-text:       #0f172a; /* Dark text for light mode */
+  --lp-text-soft:  #475569; /* Slate text for labels/subtitles */
+  --lp-border:     #cbd5e1; /* Light borders */
+  --lp-border-focus: #10b981;
+  --lp-ease:       cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Dark Mode Overrides (Matches your navbar logic) ─── */
+.fb-dark {
   --lp-bg-deep:    #06121d; 
   --lp-bg-mid:     #0f172a;
   --lp-bg-card:    #0b1b2a;
   
-  --lp-teal:       #10b981;
-  --lp-teal-glow:  #10b98166;
-  --lp-teal-soft:  #0d9e6e;
-  --lp-gold:       #f4b942;
   --lp-text:       #e2e8f0;
   --lp-text-soft:  #94a3b8;
   --lp-border:     #1f3344;
-  --lp-border-focus: #10b981;
-  --lp-ease:       cubic-bezier(0.22, 1, 0.36, 1);
+  --lp-teal-glow:  #10b98166;
 }
 
 /* ─── Reset within login scope ────────────────────────── */
