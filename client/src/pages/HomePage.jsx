@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
+
 // Import the shiny new FoodCard we made instead of the old FoodList
-// Add this line instead:
 import { FoodCard } from './FoodListPage';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useLocationContext } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
 import { getAllFood } from '../services/food.service';
 import { calculateDistanceKm, getPriorityMeta, inferFoodType, normalizeQualityStatus } from '../utils/helpers';
+
 // Import FoodListPage CSS so the grid and cards have the right styling
 import './FoodListPage.css'; 
 import './HomePage.css'; 
@@ -35,7 +36,7 @@ function HomePage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { location, status } = useLocationContext();
-  const { user } = useAuth();
+  const { user } = useAuth(); // We will use this to block unauthenticated access
   const navigate = useNavigate();
   
   const { scrollY } = useScroll();
@@ -43,6 +44,13 @@ function HomePage() {
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   useEffect(() => {
+    // Optional: You could wrap this fetch in an `if (user)` check 
+    // to save an API call if they aren't logged in!
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     getAllFood()
       .then((res) => {
         const data = Array.isArray(res.data) ? res.data : (res.data?.items || []);
@@ -61,7 +69,7 @@ function HomePage() {
           return createdDate.toDateString() === now.toDateString();
         });
 
-        // 3. Format the data perfectly for the FoodCard (just like ListingPage does)
+        // 3. Format the data perfectly for the FoodCard
         const formattedItems = todaysItems.map(item => {
           const distanceKm = calculateDistanceKm(location, { lat: item.latitude, lng: item.longitude });
           return {
@@ -76,7 +84,7 @@ function HomePage() {
       })
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
-  }, [location]);
+  }, [location, user]);
 
   return (
     <div className="fb-home-wrapper">
@@ -109,84 +117,114 @@ function HomePage() {
           </motion.p>
 
           <motion.div variants={fadeInUp} className="fb-cta-group">
-            <Link to="/foods" className="fb-btn-primary">Browse Food</Link>
-            <Link to="/add-food" className="fb-btn-glass">Donate Food</Link>
-            <Link to="/donate-money" className="fb-btn-glass">Donate Money</Link>
+            {/* CONDITIONAL RENDERING BASED ON USER AUTH STATUS */}
+            {user ? (
+              <>
+                <Link to="/foods" className="fb-btn-primary">Browse Food</Link>
+                <Link to="/add-food" className="fb-btn-glass">Donate Food</Link>
+                <Link to="/donate-money" className="fb-btn-glass">Donate Money</Link>
+              </>
+            ) : (
+              <div style={{
+                background: 'rgba(0, 0, 0, 0.5)',
+                padding: '2rem',
+                borderRadius: '16px',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                textAlign: 'center',
+                maxWidth: '450px',
+                margin: '0 auto'
+              }}>
+                <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '0.75rem' }}>
+                  Authentication Required
+                </h3>
+                <p style={{ color: '#e2e8f0', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Please log in or sign up to browse available food, make donations, and use the app.
+                </p>
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                  <Link to="/login" className="fb-btn-primary">Log In</Link>
+                  <Link to="/signup" className="fb-btn-glass">Sign Up</Link>
+                </div>
+              </div>
+            )}
           </motion.div>
 
-          {status === 'success' && location && (
+          {status === 'success' && location && user && (
             <motion.p variants={fadeInUp} className="fb-location-tag">
               ● Live near {location.lat.toFixed(2)}, {location.lng.toFixed(2)}
             </motion.p>
           )}
         </motion.div>
 
-        {/* Animated Scroll Indicator */}
-        <motion.div 
-          animate={{ y: [0, 12, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="fb-scroll-indicator"
-        >
-          <div className="fb-mouse">
-            <div className="fb-wheel" />
-          </div>
-        </motion.div>
+        {/* Animated Scroll Indicator - Only show if logged in to encourage scrolling */}
+        {user && (
+          <motion.div 
+            animate={{ y: [0, 12, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="fb-scroll-indicator"
+          >
+            <div className="fb-mouse">
+              <div className="fb-wheel" />
+            </div>
+          </motion.div>
+        )}
       </section>
 
-      {/* --- LISTINGS SECTION --- */}
-      <motion.section 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        className="fb-listings-section"
-      >
-        <div className="fb-section-header">
-          <div>
-            <h2 className="fb-section-title">Latest Listings</h2>
-            <p className="fb-section-subtitle">Real-time surplus added today, available for pickup.</p>
+      {/* --- LISTINGS SECTION (ONLY VISIBLE IF LOGGED IN) --- */}
+      {user && (
+        <motion.section 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+          className="fb-listings-section"
+        >
+          <div className="fb-section-header">
+            <div>
+              <h2 className="fb-section-title">Latest Listings</h2>
+              <p className="fb-section-subtitle">Real-time surplus added today, available for pickup.</p>
+            </div>
+            <Link to="/foods" className="fb-view-all">View all listings →</Link>
           </div>
-          <Link to="/foods" className="fb-view-all">View all listings →</Link>
-        </div>
 
-        <div className="fb-list-wrapper">
-          <AnimatePresence mode="wait">
-            {loading ? (
-              <motion.div 
-                key="loader"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="fb-loader-container"
-              >
-                <LoadingSpinner label="Locating donations..." />
-              </motion.div>
-            ) : items.length === 0 ? (
-               <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fb-empty-state">
-                  <p style={{ color: 'var(--fb-text-soft)', padding: '2rem 0', textAlign: 'center' }}>
-                    No new donations have been posted yet today. Check back soon or view all listings!
-                  </p>
-               </motion.div>
-            ) : (
-              <motion.div
-                key="list"
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-                className="fl-card-grid" /* THIS IS THE MAGIC CLASS */
-              >
-                {/* RENDER THE NEW FOOD CARDS DIRECTLY IN A GRID */}
-                {items.slice(0, 6).map(item => (
-                  <FoodCard 
-                    key={item.id} 
-                    item={item} 
-                    user={user}
-                    onRequest={(food) => toast.success(`Food request sent for ${food.title}.`)}
-                    onViewMap={(food) => navigate(`/map?focus=${food.id}`)}
-                    onViewDetails={(food) => navigate(`/food/${food.id}`)}
-                  />
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.section>
+          <div className="fb-list-wrapper">
+            <AnimatePresence mode="wait">
+              {loading ? (
+                <motion.div 
+                  key="loader"
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="fb-loader-container"
+                >
+                  <LoadingSpinner label="Locating donations..." />
+                </motion.div>
+              ) : items.length === 0 ? (
+                 <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fb-empty-state">
+                    <p style={{ color: 'var(--fb-text-soft)', padding: '2rem 0', textAlign: 'center' }}>
+                      No new donations have been posted yet today. Check back soon or view all listings!
+                    </p>
+                 </motion.div>
+              ) : (
+                <motion.div
+                  key="list"
+                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+                  className="fl-card-grid"
+                >
+                  {items.slice(0, 6).map(item => (
+                    <FoodCard 
+                      key={item.id} 
+                      item={item} 
+                      user={user}
+                      onRequest={(food) => toast.success(`Food request sent for ${food.title}.`)}
+                      onViewMap={(food) => navigate(`/map?focus=${food.id}`)}
+                      onViewDetails={(food) => navigate(`/food/${food.id}`)}
+                    />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.section>
+      )}
     </div>
   );
 }
