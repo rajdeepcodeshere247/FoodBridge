@@ -44,8 +44,7 @@ function HomePage() {
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   useEffect(() => {
-    // Optional: You could wrap this fetch in an `if (user)` check 
-    // to save an API call if they aren't logged in!
+    // Save an API call if they aren't logged in
     if (!user) {
       setLoading(false);
       return;
@@ -139,11 +138,10 @@ function HomePage() {
                   Authentication Required
                 </h3>
                 <p style={{ color: '#e2e8f0', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-                  Please log in or sign up to browse available food, make donations, and use the app.
+                  Please log in to browse available food, make donations, and use the app.
                 </p>
                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                  <Link to="/login" className="fb-btn-primary">Log In</Link>
-                  <Link to="/signup" className="fb-btn-glass">Sign Up</Link>
+                  <Link to="/login" className="fb-btn-primary" style={{ width: '100%', maxWidth: '200px' }}>Log In</Link>
                 </div>
               </div>
             )}
@@ -156,7 +154,7 @@ function HomePage() {
           )}
         </motion.div>
 
-        {/* Animated Scroll Indicator - Only show if logged in to encourage scrolling */}
+        {/* Animated Scroll Indicator - Only show if logged in */}
         {user && (
           <motion.div 
             animate={{ y: [0, 12, 0] }}
