@@ -404,7 +404,4 @@ npm run dev
 
 ---
 
-## License
-
-This repository currently has no explicit license file.  
-If this project is public, add a `LICENSE` (MIT/Apache-2.0/etc.) to clarify usage rights.
+---
