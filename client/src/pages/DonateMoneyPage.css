@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 /* ─── Root Tokens ─────────────────────────────────────────── */
@@ -177,6 +178,11 @@ body.fb-dark {
   line-height: 1.65;
   margin-bottom: 0.2rem;
   transition: color 0.3s ease;
+}
+
+.fb-optional-note {
+  font-weight: 400;
+  color: var(--muted);
 }
 
 /* ─── Preset Amounts ──────────────────────────────────────── */
@@ -514,4 +520,51 @@ body.fb-dark .fb-success-splash h2 {
   .fb-donate-card { padding: 1.5rem 1.1rem; }
   .fb-donate-grid { grid-template-columns: 1fr; }
   .fb-trust-bar { gap: 1rem; }
+}
+
+@media (max-width: 540px) {
+  .fb-donate-page {
+    padding: 4rem 0.85rem 2.25rem;
+  }
+
+  .fb-donate-card {
+    border-radius: 18px;
+    padding: 1.15rem 0.9rem;
+  }
+
+  .fb-donate-chip {
+    font-size: 0.7rem;
+    padding: 0.32rem 0.72rem;
+  }
+
+  .fb-donate-subtitle {
+    font-size: 0.86rem;
+  }
+
+  .fb-amount-presets {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .fb-preset-btn {
+    width: 100%;
+    padding: 0.52rem 0.65rem;
+    font-size: 0.8rem;
+    justify-content: center;
+  }
+
+  .fb-donate-grid {
+    gap: 0.85rem;
+  }
+
+  .fb-donate-btn {
+    font-size: 0.92rem;
+    padding: 0.92rem 0.9rem;
+  }
+
+  .fb-btn-inner {
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
 }

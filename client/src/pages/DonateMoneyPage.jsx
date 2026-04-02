@@ -136,6 +136,8 @@ function DonateMoneyPage() {
   const cardRef = useRef(null);
   use3DTilt(cardRef);
   const [ripples, addRipple] = useRipple();
+  const isDarkTheme =
+    typeof document !== 'undefined' && document.body.classList.contains('fb-dark');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -195,7 +197,7 @@ function DonateMoneyPage() {
             preferences: { show_default_blocks: true },
           },
         },
-        theme: { color: '#10b981' },
+        theme: { color: isDarkTheme ? '#34d399' : '#10b981' },
         handler: async (paymentResponse) => {
           await verifyDonationPayment({ donationId: donation.id, ...paymentResponse });
           setShowSuccess(true);
@@ -294,7 +296,7 @@ function DonateMoneyPage() {
           </label>
 
           <label className="full-width">
-            Message <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
+            Message <span className="fb-optional-note">(optional)</span>
             <textarea
               name="message"
               value={form.message}

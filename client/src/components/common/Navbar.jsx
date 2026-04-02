@@ -40,6 +40,11 @@ export default function Navbar() {
         <div className="fb-brand-section">
           <Link to="/" className="fb-brand">
             <img src="/logo.webp" alt="FoodBridge" className="fb-logo-img" />
+            <span className="fb-wordmark" aria-label="FoodBridge brand">
+              <span className="fb-wordmark-food">Food</span>
+              <span className="fb-wordmark-bridge">Bridge</span>
+              <span className="fb-wordmark-spark"></span>
+            </span>
           </Link>
         </div>
 
