@@ -5,7 +5,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useAuth } from '../context/AuthContext';
 import { useLocationContext } from '../context/LocationContext';
-import { getAllFood, getNearbyFood } from '../services/food.service';
+import { getAllFood } from '../services/food.service';
 import { calculateDistanceKm, getPriorityMeta, inferFoodType, normalizeQualityStatus } from '../utils/helpers';
 import './FoodListPage.css'; 
 
@@ -18,7 +18,6 @@ export function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
     return 'badge-spoiled';
   };
 
-  // Format exact time remaining in Days
   const formatTimeLeft = (expiryDate) => {
     if (!expiryDate) return 'Unknown';
     const diff = new Date(expiryDate) - new Date();
@@ -33,7 +32,6 @@ export function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
     return `${hours} hour${hours > 1 ? 's' : ''}`;
   };
 
-  // Robust location check to find your backend's specific location key
   const displayLocation = 
     item.location_text || 
     item.address || 
@@ -117,7 +115,6 @@ export function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
   );
 }
 
-/* ─── MAIN PAGE COMPONENT ─── */
 export default function FoodListPage() {
   const navigate = useNavigate();
   const { location } = useLocationContext();
@@ -125,7 +122,6 @@ export default function FoodListPage() {
   
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [offlineMode, setOfflineMode] = useState(false);
   
   // Filters
   const [searchText, setSearchText] = useState('');
@@ -143,21 +139,16 @@ export default function FoodListPage() {
     const loadListings = async () => {
       setLoading(true);
       try {
-        const response = location
-          ? await getNearbyFood(location.lat, location.lng, 10)
-          : await getAllFood();
-
+        const response = await getAllFood();
         const payload = Array.isArray(response.data) ? response.data : (response.data?.items || []);
         localStorage.setItem('fb-cached-listings', JSON.stringify(payload));
         if (mounted) {
           setItems(payload);
-          setOfflineMode(false);
         }
       } catch {
         const cached = localStorage.getItem('fb-cached-listings');
         if (cached && mounted) {
           setItems(JSON.parse(cached));
-          setOfflineMode(true);
         } else if (mounted) {
           setItems([]);
         }
@@ -170,12 +161,10 @@ export default function FoodListPage() {
 
     const poll = setInterval(async () => {
       try {
-        const response = location
-          ? await getNearbyFood(location.lat, location.lng, 10)
-          : await getAllFood();
+        const response = await getAllFood();
         const payload = Array.isArray(response.data) ? response.data : (response.data?.items || []);
         setItems((current) => {
-          if (payload.length > current.length) toast.info('🔔 New food added near you.');
+          if (payload.length > current.length) toast.info('🔔 New food added.');
           return payload;
         });
       } catch {}
@@ -185,10 +174,13 @@ export default function FoodListPage() {
       mounted = false;
       clearInterval(poll);
     };
-  }, [location]);
+  }, []);
 
   const preparedItems = useMemo(() => items.map((item) => {
-    const distanceKm = calculateDistanceKm(location, { lat: item.latitude, lng: item.longitude });
+    const distanceKm = (location && item.latitude && item.longitude) 
+      ? calculateDistanceKm(location, { lat: item.latitude, lng: item.longitude })
+      : null;
+
     const qualityStatus = normalizeQualityStatus(item.quality_status, item.expiry_time);
     const priority = getPriorityMeta(item.expiry_time);
 
@@ -207,12 +199,9 @@ export default function FoodListPage() {
     const expiryLimitMinutes = { '1h': 60, '3h': 180, '6h': 360 };
 
     return preparedItems.filter((item) => {
-      
-      // 1. GLOBALLY REMOVE EXPIRED ITEMS
       if (item.status === 'expired') return false;
       if (item.expiry_time && new Date(item.expiry_time) < now) return false;
 
-      // 2. Apply user selected filters
       const query = searchText.trim().toLowerCase();
       const textMatch = !query || (item.title || '').toLowerCase().includes(query) || (item.location_text || '').toLowerCase().includes(query);
       const distanceMatch = distanceFilter === 'all' || (typeof item.distanceKm === 'number' && item.distanceKm <= Number(distanceFilter));
@@ -238,12 +227,9 @@ export default function FoodListPage() {
     <div className="fb-page">
       <div className="fb-reveal fl-header-section">
         <h1>Smart Food Queue</h1>
-        <p className="fb-subtitle">Fast decisions first: urgent items rise to the top, with route-ready actions.</p>
-        {offlineMode && <p className="fb-notice">📶 Low internet mode: showing last cached listings.</p>}
       </div>
 
       <section className="fl-filter-panel fb-reveal">
-        {/* Top Row: Prominent Search Bar */}
         <div className="fl-search-wrap">
           <svg className="fl-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -256,7 +242,6 @@ export default function FoodListPage() {
           />
         </div>
 
-        {/* Middle Row: The 4 Core Filters */}
         <div className="fl-filters-grid">
           <select className="fl-select" value={distanceFilter} onChange={(e) => setDistanceFilter(e.target.value)}>
             <option value="all">Distance: Any</option>
@@ -283,7 +268,6 @@ export default function FoodListPage() {
           </select>
         </div>
 
-        {/* Bottom Row: Results Count & Sort Alignment */}
         <div className="fl-toolbar-bottom">
           <span className="fl-results-count">
             <span className="dot"></span>
