@@ -43,36 +43,36 @@
   --shadow-card-hover:   0 28px 72px rgba(22, 163, 74, 0.12), 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
-/* ── 2. Dark Theme Variables ─────────────────────────────── */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-gradient-1:     #020617;
-    --bg-gradient-2:     #0f172a;
-    --bg-gradient-3:     #064e3b;
-    --surface-card:      rgba(15, 23, 42, 0.75);
-    --surface-input:     #1e293b;
-    
-    --text-main:         #f9fafb;
-    --text-muted:        #9ca3af;
-    --text-label:        #e5e7eb;
-    
-    --border-main:       #334155;
-    --border-input:      #334155;
-    
-    --eyebrow-bg:        rgba(22, 163, 74, 0.2);
-    --eyebrow-text:      #4ade80;
-    
-    --btn-sec-bg:        rgba(22, 163, 74, 0.1);
-    --btn-sec-border:    #065f46;
-    --btn-sec-text:      #4ade80;
-    --btn-sec-hover:     rgba(22, 163, 74, 0.2);
+/* ── 2. Dark Theme Variables (Manual Toggle) ─────────────── */
+/* Add class="dark-theme" or data-theme="dark" to your <body> to activate */
+body.dark-theme,
+[data-theme="dark"] {
+  --bg-gradient-1:     #020617;
+  --bg-gradient-2:     #0f172a;
+  --bg-gradient-3:     #064e3b;
+  --surface-card:      rgba(15, 23, 42, 0.75);
+  --surface-input:     #1e293b;
+  
+  --text-main:         #f9fafb;
+  --text-muted:        #9ca3af;
+  --text-label:        #e5e7eb;
+  
+  --border-main:       #334155;
+  --border-input:      #334155;
+  
+  --eyebrow-bg:        rgba(22, 163, 74, 0.2);
+  --eyebrow-text:      #4ade80;
+  
+  --btn-sec-bg:        rgba(22, 163, 74, 0.1);
+  --btn-sec-border:    #065f46;
+  --btn-sec-text:      #4ade80;
+  --btn-sec-hover:     rgba(22, 163, 74, 0.2);
 
-    --blob-1:            rgba(74, 222, 128, 0.08);
-    --blob-2:            rgba(251, 191, 36, 0.05);
-    
-    --shadow-card:       0 20px 60px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
-    --shadow-card-hover: 0 28px 72px rgba(22, 163, 74, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3);
-  }
+  --blob-1:            rgba(74, 222, 128, 0.08);
+  --blob-2:            rgba(251, 191, 36, 0.05);
+  
+  --shadow-card:       0 20px 60px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 28px 72px rgba(22, 163, 74, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* ── 3. Page Shell & Geometry ────────────────────────────── */
