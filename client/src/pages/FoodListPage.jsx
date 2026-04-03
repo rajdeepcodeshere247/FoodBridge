@@ -6,11 +6,12 @@ import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useAuth } from '../context/AuthContext';
 import { useLocationContext } from '../context/LocationContext';
 import { getAllFood } from '../services/food.service';
-import { calculateDistanceKm, getPriorityMeta, inferFoodType, normalizeQualityStatus } from '../utils/helpers';
+import { calculateDistanceKm, getNavigationUrl, getPriorityMeta, inferFoodType, normalizeQualityStatus } from '../utils/helpers';
 import './FoodListPage.css'; 
 
-export function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
+export function FoodCard({ item, user, userLocation, onRequest, onViewMap, onViewDetails }) {
   const isOwner = user && (item.donor_id === user.id || item.user_id === user.id);
+  const navigationUrl = getNavigationUrl(item, userLocation);
 
   const getQualityColor = (status) => {
     if (status === 'fresh') return 'badge-fresh';
@@ -106,6 +107,15 @@ export function FoodCard({ item, user, onRequest, onViewMap, onViewDetails }) {
           <button className="fl-btn-secondary" onClick={() => onViewMap(item)}>
             Map
           </button>
+          {navigationUrl ? (
+            <a className="fl-btn-secondary" href={navigationUrl} target="_blank" rel="noreferrer">
+              Navigate
+            </a>
+          ) : (
+            <button className="fl-btn-secondary" disabled title="Coordinates unavailable">
+              Navigate
+            </button>
+          )}
           <button className="fl-btn-secondary" onClick={() => onViewDetails(item)}>
             Details
           </button>
@@ -295,9 +305,10 @@ export default function FoodListPage() {
                 key={item.id} 
                 item={item} 
                 user={user}
+                userLocation={location}
                 onRequest={(food) => toast.success(`Food request sent for ${food.title}.`)}
                 onViewMap={(food) => navigate(`/map?focus=${food.id}`)}
-                onViewDetails={(food) => navigate(`/food/${food.id}`)}
+                onViewDetails={(food) => navigate(`/foods/${food.id}`)}
               />
             ))}
             {filteredItems.length === 0 && (

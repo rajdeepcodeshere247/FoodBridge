@@ -45,7 +45,7 @@
 }
 
 .fb-brand:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
 .fb-logo-img {
@@ -60,12 +60,9 @@
   align-items: center;
   font-weight: 800;
   letter-spacing: 0.01em;
-  
-  line-height: 1.2; 
-  font-size: 1.8rem;
+  line-height: 1;
+  font-size: 1.22rem;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
-  
-  overflow: visible; 
 }
 
 .fb-wordmark-food {
@@ -78,8 +75,6 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  
-  padding-bottom: 0.1em; 
 }
 
 .fb-wordmark-spark {
@@ -246,7 +241,10 @@
   .fb-logo-img { height: 56px; }
   .fb-wordmark { font-size: 1.08rem; }
   .fb-brand-section { flex: none; }
-  .fb-nav-actions-group { flex: none; }
+  .fb-nav-actions-group {
+    flex: none;
+    display: none;
+  }
   .fb-nav-links-center { display: none; } /* Hide links on tablet/mobile by default */
   
   .nav-mobile-hamburger { display: block; }
@@ -295,6 +293,9 @@
   .fb-navbar-wrap { height: 66px; }
   .fb-navbar { padding: 0 0.8rem; }
   .fb-logo-img { height: 48px; }
+  .nav-location-pill {
+    display: none;
+  }
   .fb-wordmark {
     font-size: 0.96rem;
   }

@@ -1,3 +1,4 @@
+
 .fl-header-section {
   margin-bottom: 0.5rem;
 }
@@ -364,10 +365,11 @@
 .fl-btn-group {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .fl-btn-secondary {
-  flex: 1;
+  flex: 1 1 90px;
   background: transparent;
   border: 1px solid var(--fb-border);
   color: var(--fb-text);

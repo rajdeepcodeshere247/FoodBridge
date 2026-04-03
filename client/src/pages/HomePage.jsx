@@ -212,9 +212,10 @@ function HomePage() {
                       key={item.id} 
                       item={item} 
                       user={user}
+                      userLocation={location}
                       onRequest={(food) => toast.success(`Food request sent for ${food.title}.`)}
                       onViewMap={(food) => navigate(`/map?focus=${food.id}`)}
-                      onViewDetails={(food) => navigate(`/food/${food.id}`)}
+                      onViewDetails={(food) => navigate(`/foods/${food.id}`)}
                     />
                   ))}
                 </motion.div>
