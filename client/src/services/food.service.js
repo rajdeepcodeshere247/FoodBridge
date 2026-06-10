@@ -1,7 +1,7 @@
 // Food listing API calls
 import api from './api';
 
-export const getAllFood = () => api.get('/food');
+export const getAllFood = (page = 1, limit = 12) => api.get(`/food?page=${page}&limit=${limit}`);
 export const getNearbyFood = (lat, lng, radius = 5) =>
   api.get(`/food/nearby?lat=${lat}&lng=${lng}&radius=${radius}`);
 export const getFoodById = (id) => api.get(`/food/${id}`);

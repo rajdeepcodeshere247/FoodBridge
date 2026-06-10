@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
 import { createDonationOrder, verifyDonationPayment } from '../services/donation.service';
 import './DonateMoneyPage.css';
 
@@ -224,7 +225,13 @@ function DonateMoneyPage() {
       {showSuccess && <SuccessSplash onClose={() => setShowSuccess(false)} />}
 
       {/* ── Card ── */}
-      <div className="fb-donate-card" ref={cardRef}>
+      <motion.div 
+        className="fb-donate-card" 
+        ref={cardRef}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <p className="fb-donate-chip">🔒 Secure payment integration</p>
 
         <h1>
@@ -354,7 +361,7 @@ function DonateMoneyPage() {
             100% Transparent
           </span>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

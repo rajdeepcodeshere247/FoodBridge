@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import FoodMap from '../components/map/FoodMap';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useLocationContext } from '../context/LocationContext';
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import { motion } from 'framer-motion';
 import { getAllFood, getNearbyFood } from '../services/food.service';
 import { calculateDistanceKm, getNavigationUrl, getPriorityMeta, normalizeQualityStatus } from '../utils/helpers';
 
@@ -15,7 +15,7 @@ function MapPage() {
   const [radiusKm, setRadiusKm] = useState(5);
   const [selectedId, setSelectedId] = useState(() => searchParams.get('focus') || null);
 
-  useScrollReveal();
+  const [selectedId, setSelectedId] = useState(() => searchParams.get('focus') || null);
 
   useEffect(() => {
     const focusId = searchParams.get('focus');
@@ -67,16 +67,19 @@ function MapPage() {
 
   return (
     <div className="fb-page">
-      <div className="fb-reveal">
+      <motion.div initial={{opacity:0, y:15}} animate={{opacity:1, y:0}}>
         <h1>Food Rescue Map</h1>
         <p className="fb-subtitle">
           {status === 'success'
             ? 'Map and list stay in sync. Click either side to focus, navigate, and pick up faster.'
             : 'Enable location to discover nearby urgent pickups in real time.'}
         </p>
-      </div>
+      </motion.div>
 
-      <section className="fb-panel fb-reveal">
+      <motion.section 
+        className="fb-panel"
+        initial={{opacity:0, y:15}} animate={{opacity:1, y:0}} transition={{delay: 0.1}}
+      >
         <div className="fb-toolbar">
           <label htmlFor="radius-select"><strong>Search radius</strong></label>
           <select id="radius-select" className="fb-input fb-input-inline" value={radiusKm} onChange={(e) => setRadiusKm(Number(e.target.value))}>
@@ -85,15 +88,19 @@ function MapPage() {
             <option value={8}>8 km</option>
           </select>
         </div>
-      </section>
+      </motion.section>
 
-      <section className="fb-map-layout fb-reveal">
+      <motion.section 
+        className="fb-map-layout"
+        initial={{opacity:0, y:15}} animate={{opacity:1, y:0}} transition={{delay: 0.2}}
+      >
         {loading ? <LoadingSpinner /> : (
           <>
             <div className="fb-map-sidepanel">
               <h3>Nearby Listings ({normalizedListings.length})</h3>
               {normalizedListings.map((item) => (
-                <article
+                <motion.article
+                  whileHover={{ x: 4, backgroundColor: "var(--fb-bg-accent)" }}
                   key={item.id}
                   className={`fb-map-item ${selectedId === String(item.id) ? 'is-selected' : ''}`}
                   onClick={() => setSelectedId(String(item.id))}
@@ -114,7 +121,7 @@ function MapPage() {
                       <button type="button" className="fb-btn-secondary" disabled>Navigate</button>
                     )}
                   </div>
-                </article>
+                </motion.article>
               ))}
               {!normalizedListings.length && <p className="fb-empty">No food markers available for selected radius.</p>}
             </div>
@@ -128,7 +135,7 @@ function MapPage() {
             />
           </>
         )}
-      </section>
+      </motion.section>
     </div>
   );
 }

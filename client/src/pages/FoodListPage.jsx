@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { motion, AnimatePresence } from 'framer-motion';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useAuth } from '../context/AuthContext';
 import { useLocationContext } from '../context/LocationContext';
 import { getAllFood } from '../services/food.service';
@@ -42,7 +42,16 @@ export function FoodCard({ item, user, userLocation, onRequest, onViewMap, onVie
     'Not specified';
 
   return (
-    <div className="fl-card">
+    <motion.div 
+      className="fl-card"
+      layout
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.4, type: "spring", stiffness: 200, damping: 20 }}
+      whileHover={{ y: -8, boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)", borderColor: "var(--fb-accent)" }}
+      whileTap={{ scale: 0.98 }}
+    >
       <div className="fl-card-image-wrap">
         <img 
           src={item.image_url || 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=600&q=80'} 
@@ -121,7 +130,7 @@ export function FoodCard({ item, user, userLocation, onRequest, onViewMap, onVie
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -132,6 +141,8 @@ export default function FoodListPage() {
   
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   
   // Filters
   const [searchText, setSearchText] = useState('');
@@ -141,50 +152,36 @@ export default function FoodListPage() {
   const [qualityFilter, setQualityFilter] = useState('all');
   const [sortBy, setSortBy] = useState('priority');
 
-  useScrollReveal([items.length, loading]);
+  const loadListings = useCallback(async (pageNum, isLoadMore = false) => {
+    if (!isLoadMore) setLoading(true);
+    try {
+      const response = await getAllFood(pageNum, 12);
+      const payload = Array.isArray(response.data) ? response.data : (response.data?.items || []);
+      const newHasMore = response.data?.hasMore ?? false;
+
+      if (isLoadMore) {
+        setItems(prev => {
+          const newItems = payload.filter(p => !prev.some(item => item.id === p.id));
+          return [...prev, ...newItems];
+        });
+      } else {
+        setItems(payload);
+        localStorage.setItem('fb-cached-listings', JSON.stringify(payload));
+      }
+      setHasMore(newHasMore);
+    } catch {
+      if (!isLoadMore) {
+        const cached = localStorage.getItem('fb-cached-listings');
+        if (cached) setItems(JSON.parse(cached));
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    let mounted = true;
-
-    const loadListings = async () => {
-      setLoading(true);
-      try {
-        const response = await getAllFood();
-        const payload = Array.isArray(response.data) ? response.data : (response.data?.items || []);
-        localStorage.setItem('fb-cached-listings', JSON.stringify(payload));
-        if (mounted) {
-          setItems(payload);
-        }
-      } catch {
-        const cached = localStorage.getItem('fb-cached-listings');
-        if (cached && mounted) {
-          setItems(JSON.parse(cached));
-        } else if (mounted) {
-          setItems([]);
-        }
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    loadListings();
-
-    const poll = setInterval(async () => {
-      try {
-        const response = await getAllFood();
-        const payload = Array.isArray(response.data) ? response.data : (response.data?.items || []);
-        setItems((current) => {
-          if (payload.length > current.length) toast.info('🔔 New food added.');
-          return payload;
-        });
-      } catch {}
-    }, 45000);
-
-    return () => {
-      mounted = false;
-      clearInterval(poll);
-    };
-  }, []);
+    loadListings(1);
+  }, [loadListings]);
 
   const preparedItems = useMemo(() => items.map((item) => {
     const distanceKm = (location && item.latitude && item.longitude) 
@@ -235,11 +232,20 @@ export default function FoodListPage() {
 
   return (
     <div className="fb-page">
-      <div className="fb-reveal fl-header-section">
+      <motion.div 
+        className="fl-header-section"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
         <h1>Smart Food Queue</h1>
-      </div>
+      </motion.div>
 
-      <section className="fl-filter-panel fb-reveal">
+      <motion.section 
+        className="fl-filter-panel"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
         <div className="fl-search-wrap">
           <svg className="fl-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -293,28 +299,59 @@ export default function FoodListPage() {
             </select>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <section>
-        {loading ? (
+        {loading && page === 1 ? (
           <LoadingSpinner />
         ) : (
-          <div className="fl-card-grid fb-reveal">
-            {filteredItems.map(item => (
-              <FoodCard 
-                key={item.id} 
-                item={item} 
-                user={user}
-                userLocation={location}
-                onRequest={(food) => toast.success(`Food request sent for ${food.title}.`)}
-                onViewMap={(food) => navigate(`/map?focus=${food.id}`)}
-                onViewDetails={(food) => navigate(`/foods/${food.id}`)}
-              />
-            ))}
-            {filteredItems.length === 0 && (
-              <div className="fl-empty-state">No food listings match your filters.</div>
+          <>
+            <motion.div 
+              className="fl-card-grid"
+              layout
+            >
+              <AnimatePresence>
+                {filteredItems.map(item => (
+                  <FoodCard 
+                    key={item.id} 
+                    item={item} 
+                    user={user}
+                    userLocation={location}
+                    onRequest={(food) => toast.success(`Food request sent for ${food.title}.`)}
+                    onViewMap={(food) => navigate(`/map?focus=${food.id}`)}
+                    onViewDetails={(food) => navigate(`/foods/${food.id}`)}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+            
+            {filteredItems.length === 0 && !loading && (
+              <motion.div 
+                className="fl-empty-state"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              >
+                No food listings match your filters.
+              </motion.div>
             )}
-          </div>
+
+            {hasMore && filteredItems.length > 0 && (
+              <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                <motion.button 
+                  className="fl-btn-secondary"
+                  onClick={() => {
+                    const nextPage = page + 1;
+                    setPage(nextPage);
+                    loadListings(nextPage, true);
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  disabled={loading}
+                >
+                  {loading ? 'Loading...' : 'Load More Listings'}
+                </motion.button>
+              </div>
+            )}
+          </>
         )}
       </section>
     </div>

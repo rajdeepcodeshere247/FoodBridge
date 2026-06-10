@@ -1,5 +1,6 @@
 const {
   getAllAvailableFood,
+  countAllAvailableFood,
   seedDemoListingsIfEmpty,
   getNearbyAvailableFood,
   getFoodById: getFoodByIdQuery,
@@ -17,12 +18,21 @@ const buildImageDataUrl = (file) => {
 };
 
 const getAllFood = async (req, res) => {
-  let items = await getAllAvailableFood();
-  if (!items.length) {
-    await seedDemoListingsIfEmpty();
-    items = await getAllAvailableFood();
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.max(1, parseInt(req.query.limit) || 12);
+  const offset = (page - 1) * limit;
+
+  let items = await getAllAvailableFood(limit, offset);
+  
+  if (!items.length && page === 1) {
+    const seeded = await seedDemoListingsIfEmpty();
+    if (seeded) items = await getAllAvailableFood(limit, offset);
   }
-  res.json({ items });
+  
+  const total = await countAllAvailableFood();
+  const totalPages = Math.ceil(total / limit);
+
+  res.json({ items, total, page, totalPages, hasMore: page < totalPages });
 };
 
 const getNearbyFood = async (req, res) => {

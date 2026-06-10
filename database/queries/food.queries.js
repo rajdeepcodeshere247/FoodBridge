@@ -1,11 +1,19 @@
 // SQL queries for food_listings table
 const pool = require('../../server/config/db.config');
 
-const getAllAvailableFood = async () => {
+const getAllAvailableFood = async (limit = 12, offset = 0) => {
   const result = await pool.query(
-    "SELECT * FROM food_listings WHERE status = 'available' ORDER BY created_at DESC"
+    "SELECT * FROM food_listings WHERE status = 'available' ORDER BY created_at DESC LIMIT $1 OFFSET $2",
+    [limit, offset]
   );
   return result.rows;
+};
+
+const countAllAvailableFood = async () => {
+  const result = await pool.query(
+    "SELECT COUNT(*) AS total FROM food_listings WHERE status = 'available'"
+  );
+  return parseInt(result.rows[0].total, 10);
 };
 
 const seedDemoListingsIfEmpty = async () => {
@@ -120,6 +128,7 @@ const deleteFoodListing = async (id) => {
 
 module.exports = {
   getAllAvailableFood,
+  countAllAvailableFood,
   seedDemoListingsIfEmpty,
   getNearbyAvailableFood,
   getFoodById,
