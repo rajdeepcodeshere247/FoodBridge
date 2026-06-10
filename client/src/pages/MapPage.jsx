@@ -15,8 +15,6 @@ function MapPage() {
   const [radiusKm, setRadiusKm] = useState(5);
   const [selectedId, setSelectedId] = useState(() => searchParams.get('focus') || null);
 
-  const [selectedId, setSelectedId] = useState(() => searchParams.get('focus') || null);
-
   useEffect(() => {
     const focusId = searchParams.get('focus');
     if (focusId) {
